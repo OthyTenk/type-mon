@@ -8,13 +8,13 @@ import {
   useState,
 } from "react";
 import Preview from "./Preview";
+import { countCorrectCharacters } from "../utils";
 
 const Typing = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const paragraphs = useMemo(
     () => [
-      "A plant is one of the",
       "A plant is one of the most important living things that develop on the earth and is made up of stems, leaves, roots, and so on.Parts of Plants: The part of the plant that developed beneath the soil is referred to as root and the part that grows outside of the soil is known as shoot. The shoot consists of stems, branches, l eaves, fruits, and flowers. Plants are made up of six main parts: roots, stems, leaves, flowers, fruits, and seeds.",
       "The root is the part of the plant that grows in the soil. The primary root emerges from the embryo. Its primary function is to provide the plant stability in the earth and make other mineral salts from the earth available to the plant for various metabolic processes There are three types of roots i.e. Tap Root, Adventitious Roots, and Lateral Root. The roots arise from the parts of the plant and not from the rhizomes roots.",
       "Stem is the posterior part that remains above the ground and grows negatively geotropic. Internodes and nodes are found on the stem. Branch, bud, leaf, petiole, flower, and inflorescence on a node are all those parts of the plant that remain above the ground and undergo negative subsoil development. The trees have brown bark and the young and newly developed stems are green. The roots arise from the parts of plant and not from the rhizomes roots.",
@@ -35,7 +35,7 @@ const Typing = () => {
   const [CPM, setCPM] = useState(0);
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const CurrentPositionStyle = "border-b-4 border-blue-600";
+  const CurrentPositionStyle = "border-l-2 border-yellow-400";
 
   const loadParagraph = useCallback(() => {
     const ranIndex = Math.floor(Math.random() * paragraphs.length);
@@ -64,9 +64,11 @@ const Typing = () => {
         let showTypeResult = "";
         if (index < inpFieldValue.length) {
           if (letter === inpFieldValue[index]) {
-            showTypeResult = "bg-green-300";
+            // showTypeResult = "bg-green-300 text-green-800";
+            showTypeResult = "text-green-400";
           } else {
-            showTypeResult = "bg-red-500";
+            // showTypeResult = "bg-red-500 text-red-900";
+            showTypeResult = "text-red-500";
           }
         }
 
@@ -86,6 +88,41 @@ const Typing = () => {
     setTypingText(content);
   }, [inpFieldValue, paragraphs, currentTextIndex]);
 
+  useEffect(() => {
+    loadParagraph();
+  }, [loadParagraph]);
+
+  useEffect(() => {
+    let cpm = (charIndex - mistakes) * (60 / (maxTime - timeLeft));
+    cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm;
+    setCPM(cpm);
+
+    let wpm = Math.round(
+      ((charIndex - mistakes) / 5 / (maxTime - timeLeft)) * 60
+    );
+
+    wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm;
+    setWPM(wpm);
+  }, [timeLeft, charIndex, mistakes]);
+
+  useEffect(() => {
+    let interval: number = 0;
+
+    if (timeLeft <= 0 || !isTyping) {
+      clearInterval(interval);
+      setIsTyping(false);
+      return;
+    }
+
+    interval = setInterval(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isTyping, timeLeft]);
+
   const onTryAgain = () => {
     setIsTyping(false);
     setTimeLeft(maxTime);
@@ -98,66 +135,56 @@ const Typing = () => {
     loadParagraph();
   };
 
-  useEffect(() => {
-    loadParagraph();
-  }, [loadParagraph]);
-
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
-    if (inpFieldValue.length > typingText.length) return;
+    if (inpFieldValue.length > typingText.length || timeLeft < 1) {
+      setIsTyping(false);
+      return;
+    }
+
+    if (!isTyping) {
+      setIsTyping(true);
+    }
+
+    setCharIndex(inpFieldValue.length);
+
+    const temp = countCorrectCharacters(
+      paragraphs[currentTextIndex],
+      inpFieldValue
+    );
+    setMistakes(temp);
+
+    // console.log(temp);
 
     setInpFieldValue(e.target.value);
   };
 
-  useEffect(() => {
-    let interval: number = 0;
-
-    if (isTyping && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
-
-        let cpm = (charIndex - mistakes) * (60 / (maxTime - timeLeft));
-        cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm;
-        setCPM(cpm);
-
-        let wpm = Math.round(
-          ((charIndex - mistakes) / 5 / (maxTime - timeLeft)) * 60
-        );
-
-        wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm;
-        setWPM(wpm);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      clearInterval(interval);
-      setIsTyping(false);
-    }
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isTyping, timeLeft, charIndex, mistakes]);
-
   return (
-    <div className="p-0 m-0 min-h-screen min-w-full flex justify-center items-center bg-neutral-600">
-      <div className="max-w-[700px] md:m-1 w-[calc(100% - 10px)] md:p-7 md:rounded-xl md:border md:border-neutral-200 bg-neutral-700 md:shadow-lg">
-        <input
-          ref={inputRef}
-          type="text"
-          className="-z-10 absolute"
-          value={inpFieldValue}
-          onChange={onTyping}
-        />
+    <>
+      <div className="p-0 m-0 min-h-screen min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
+        <h3 className="text-2xl font-semibold text-neutral-400 w-full text-center my-4">
+          Type Mon
+        </h3>
+        <div className="md:max-w-7xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-xl bg-neutral-800 md:shadow-lg">
+          <input
+            ref={inputRef}
+            type="text"
+            className="-z-10 absolute"
+            value={inpFieldValue}
+            onChange={onTyping}
+          />
 
-        {/* Render the Preview child component */}
-        <Preview
-          typingText={typingText}
-          timeLeft={timeLeft}
-          mistakes={mistakes}
-          WPM={WPM}
-          CPM={CPM}
-          onTryAgain={onTryAgain}
-        />
+          {/* Render the Preview child component */}
+          <Preview
+            typingText={typingText}
+            timeLeft={timeLeft}
+            mistakes={mistakes}
+            WPM={WPM}
+            CPM={CPM}
+            onTryAgain={onTryAgain}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
