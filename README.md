@@ -1,4 +1,5 @@
-# React + TypeScript + Vite
+# Type Mon screenshot
+<img width="2800%" alt="Screenshot of wptheme" src="https://github.com/OthyTenk/type-mon/blob/main/screenshot/screenshot.png">
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
