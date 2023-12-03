@@ -1,11 +1,12 @@
-import React from "react";
 import Typing from "./components/Typing";
+import { Analytics } from "@vercel/analytics/react";
 
 const Page = () => {
   return (
-    <div>
+    <>
       <Typing />
-    </div>
+      <Analytics mode={"production"} />
+    </>
   );
 };
 
