@@ -6,7 +6,8 @@ module.exports = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  distDir: "./dist",
+  distDir: "/dist",
+  output: "export",
   images: {
     minimumCacheTTL: 900,
     remotePatterns: [
