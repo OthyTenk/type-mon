@@ -23,4 +23,19 @@ dist-ssr
 *.sln
 *.sw?
 
-.next
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
