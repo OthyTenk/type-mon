@@ -1,11 +1,11 @@
-import Typing from "./components/Typing";
+import Typing from "./components/Typing"
 
 const Page = () => {
   return (
     <>
       <Typing />
     </>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

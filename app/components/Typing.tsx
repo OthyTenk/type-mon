@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   ChangeEvent,
@@ -8,12 +8,12 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import Preview from "./Preview";
-import { countCorrectCharacters } from "../utils";
+} from "react"
+import Preview from "./Preview"
+import { countCorrectCharacters } from "../utils"
 
 const Typing = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const paragraphs = useMemo(
     () => [
@@ -24,53 +24,52 @@ const Typing = () => {
       "An aunt is a bassoon from the right perspective. As far as we can estimate, some posit the melic myanmar to be less than kutcha. One cannot separate foods from blowzy bows. The scampish closet reveals itself as a sclerous llama to those who look. A hip is the skirt of a peak. Some hempy laundries are thought of simply as orchids. A gum is a trumpet from the right perspective. A freebie flight is a wrench of the mind. Some posit the croupy.",
     ],
     []
-  );
+  )
 
-  const [typingText, setTypingText] = useState<string | ReactElement[]>("");
-  const [inpFieldValue, setInpFieldValue] = useState("");
-  const maxTime = 60;
-  const [timeLeft, setTimeLeft] = useState(maxTime);
-  const [charIndex, setCharIndex] = useState(0);
-  const [mistakes, setMistakes] = useState(0);
-  const [isTyping, setIsTyping] = useState(false);
-  const [WPM, setWPM] = useState(0);
-  const [CPM, setCPM] = useState(0);
+  const [typingText, setTypingText] = useState<string | ReactElement[]>("")
+  const [inpFieldValue, setInpFieldValue] = useState("")
+  const maxTime = 60
+  const [timeLeft, setTimeLeft] = useState(maxTime)
+  const [charIndex, setCharIndex] = useState(0)
+  const [mistakes, setMistakes] = useState(0)
+  const [isTyping, setIsTyping] = useState(false)
+  const [WPM, setWPM] = useState(0)
+  const [CPM, setCPM] = useState(0)
 
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const CurrentPositionStyle = "border-l-2 border-yellow-400";
+  const [currentTextIndex, setCurrentTextIndex] = useState(0)
+  const CurrentPositionStyle = "border-l-2 border-yellow-400"
 
   const loadParagraph = useCallback(() => {
-    const ranIndex = Math.floor(Math.random() * paragraphs.length);
-    setCurrentTextIndex(ranIndex);
-    document.addEventListener("keydown", () => inputRef.current?.focus());
+    const ranIndex = Math.floor(Math.random() * paragraphs.length)
+    setCurrentTextIndex(ranIndex)
+    document.addEventListener("keydown", () => inputRef.current?.focus())
 
     const content = Array.from(paragraphs[ranIndex]).map((letter, index) => (
       <span
         key={index}
-        className={`${index === 0 ? CurrentPositionStyle : ""}`}
-      >
+        className={`${index === 0 ? CurrentPositionStyle : ""}`}>
         {letter}
       </span>
-    ));
+    ))
 
-    setTypingText(content);
-    setInpFieldValue("");
-    setCharIndex(0);
-    setMistakes(0);
-    setIsTyping(false);
-  }, [paragraphs]);
+    setTypingText(content)
+    setInpFieldValue("")
+    setCharIndex(0)
+    setMistakes(0)
+    setIsTyping(false)
+  }, [paragraphs])
 
   useEffect(() => {
     const content = Array.from(paragraphs[currentTextIndex]).map(
       (letter, index) => {
-        let showTypeResult = "";
+        let showTypeResult = ""
         if (index < inpFieldValue.length) {
           if (letter === inpFieldValue[index]) {
             // showTypeResult = "bg-green-300 text-green-800";
-            showTypeResult = "text-green-400";
+            showTypeResult = "text-green-400"
           } else {
             // showTypeResult = "bg-red-500 text-red-900";
-            showTypeResult = "text-red-500";
+            showTypeResult = "text-red-500"
           }
         }
 
@@ -79,86 +78,85 @@ const Typing = () => {
             key={index}
             className={`${
               inpFieldValue.length === index ? CurrentPositionStyle : ""
-            } ${showTypeResult}`}
-          >
+            } ${showTypeResult}`}>
             {letter !== " " ? letter : " "}
           </span>
-        );
+        )
       }
-    );
+    )
 
-    setTypingText(content);
-  }, [inpFieldValue, paragraphs, currentTextIndex]);
-
-  useEffect(() => {
-    loadParagraph();
-  }, [loadParagraph]);
+    setTypingText(content)
+  }, [inpFieldValue, paragraphs, currentTextIndex])
 
   useEffect(() => {
-    let cpm = (charIndex - mistakes) * (60 / (maxTime - timeLeft));
-    cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm;
-    setCPM(cpm);
+    loadParagraph()
+  }, [loadParagraph])
+
+  useEffect(() => {
+    let cpm = (charIndex - mistakes) * (60 / (maxTime - timeLeft))
+    cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
+    setCPM(cpm)
 
     let wpm = Math.round(
       ((charIndex - mistakes) / 5 / (maxTime - timeLeft)) * 60
-    );
+    )
 
-    wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm;
-    setWPM(wpm);
-  }, [timeLeft, charIndex, mistakes]);
+    wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
+    setWPM(wpm)
+  }, [timeLeft, charIndex, mistakes])
 
   useEffect(() => {
-    let interval: string | number | NodeJS.Timeout | undefined = undefined;
+    let interval: string | number | NodeJS.Timeout | undefined = undefined
 
     if (timeLeft <= 0 || !isTyping) {
-      clearInterval(interval);
-      setIsTyping(false);
-      return;
+      clearInterval(interval)
+      setIsTyping(false)
+      return
     }
 
     interval = setInterval(() => {
-      setTimeLeft(timeLeft - 1);
-    }, 1000);
+      setTimeLeft(timeLeft - 1)
+    }, 1000)
 
     return () => {
-      clearInterval(interval);
-    };
-  }, [isTyping, timeLeft]);
+      clearInterval(interval)
+    }
+  }, [isTyping, timeLeft])
 
   const onTryAgain = () => {
-    setIsTyping(false);
-    setTimeLeft(maxTime);
-    setCharIndex(0);
-    setMistakes(0);
-    setTypingText("");
-    setCPM(0);
-    setWPM(0);
+    setIsTyping(false)
+    setTimeLeft(maxTime)
+    setCharIndex(0)
+    setMistakes(0)
+    setTypingText("")
+    setCPM(0)
+    setWPM(0)
 
-    loadParagraph();
-  };
+    loadParagraph()
+  }
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
     if (inpFieldValue.length > typingText.length || timeLeft < 1) {
-      setIsTyping(false);
-      return;
+      setIsTyping(false)
+      return
     }
 
     if (!isTyping) {
-      setIsTyping(true);
+      setIsTyping(true)
     }
 
-    setCharIndex(inpFieldValue.length);
+    setCharIndex(inpFieldValue.length)
 
     const temp = countCorrectCharacters(
       paragraphs[currentTextIndex],
       inpFieldValue
-    );
-    setMistakes(temp);
+    )
+    setMistakes(temp)
 
     // console.log(temp);
 
-    setInpFieldValue(e.target.value);
-  };
+    setInpFieldValue(e.target.value)
+  }
 
   return (
     <>
@@ -187,7 +185,7 @@ const Typing = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Typing;
+export default Typing

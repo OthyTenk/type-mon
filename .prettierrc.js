@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   bracketSpacing: true,
   arrowParens: "always",
   importOrder: ["^@/(.*)$", "^~/(.*)$", "^[./]"],
@@ -9,4 +9,4 @@ export default {
   trailingComma: "es5",
   semi: false,
   printWidth: 80,
-};
+}

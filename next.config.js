@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
     ignoreBuildErrors: true,
@@ -17,4 +17,4 @@ module.exports = {
       },
     ],
   },
-};
+}
