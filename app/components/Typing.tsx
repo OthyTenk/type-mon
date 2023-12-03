@@ -3,6 +3,7 @@
 import {
   ChangeEvent,
   ReactElement,
+  createRef,
   useCallback,
   useEffect,
   useMemo,
@@ -13,6 +14,7 @@ import Preview from "./Preview";
 import { countCorrectCharacters } from "../utils";
 
 const Typing = () => {
+  // const inputRef = createRef<HTMLInputElement>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const paragraphs = useMemo(
@@ -42,7 +44,12 @@ const Typing = () => {
   const loadParagraph = useCallback(() => {
     const ranIndex = Math.floor(Math.random() * paragraphs.length);
     setCurrentTextIndex(ranIndex);
-    document.addEventListener("keydown", () => inputRef.current?.focus());
+    document.addEventListener(
+      "keydown",
+      () => inputRef.current?.focus(),
+      false
+    );
+    // window.addEventListener("keyup", () => inputRef.current?.focus(), false);
 
     const content = Array.from(paragraphs[ranIndex]).map((letter, index) => (
       <span
@@ -58,7 +65,7 @@ const Typing = () => {
     setCharIndex(0);
     setMistakes(0);
     setIsTyping(false);
-  }, [paragraphs]);
+  }, [paragraphs, inputRef]);
 
   useEffect(() => {
     const content = Array.from(paragraphs[currentTextIndex]).map(
