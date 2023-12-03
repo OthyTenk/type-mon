@@ -1,13 +1,11 @@
-import Typing from "./components/Typing";
-import { Analytics } from "@vercel/analytics/react";
+import Typing from "./components/Typing"
 
 const Page = () => {
   return (
     <>
       <Typing />
-      <Analytics mode={"production"} />
     </>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

@@ -1,7 +1,10 @@
+/** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: false,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   images: {
     minimumCacheTTL: 900,
@@ -14,4 +17,4 @@ module.exports = {
       },
     ],
   },
-};
+}

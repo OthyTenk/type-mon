@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import { FC, ReactElement } from "react";
+import { FC, ReactElement } from "react"
 
 interface IPreviewProps {
-  typingText: string | ReactElement[];
-  timeLeft: number;
-  WPM: number;
-  CPM: number;
-  mistakes: number;
-  onTryAgain: () => void;
+  typingText: string | ReactElement[]
+  timeLeft: number
+  WPM: number
+  CPM: number
+  mistakes: number
+  onTryAgain: () => void
 }
 
 const Preview: FC<IPreviewProps> = ({
@@ -48,13 +48,12 @@ const Preview: FC<IPreviewProps> = ({
         </ul>
         <button
           onClick={onTryAgain}
-          className="mt-3 w-full md:w-auto py-4 px-5 outline-none border-blue-300 cursor-pointer m-1 rounded-md text-neutral-200 transition duration-75 bg-blue-500 hover:bg-blue-600"
-        >
+          className="mt-3 w-full md:w-auto py-4 px-5 outline-none border-blue-300 cursor-pointer m-1 rounded-md text-neutral-200 transition duration-75 bg-blue-500 hover:bg-blue-600">
           Try Again
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Preview;
+export default Preview
