@@ -1,12 +1,10 @@
-module.exports = {
+export default {
   bracketSpacing: true,
   arrowParens: "always",
   importOrder: ["^@/(.*)$", "^~/(.*)$", "^[./]"],
   importOrderSeparation: true,
-
   bracketSameLine: true,
   singleQuote: false,
-
   jsxSingleQuote: false,
   trailingComma: "es5",
   semi: false,
