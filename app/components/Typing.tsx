@@ -3,6 +3,7 @@
 import {
   ChangeEvent,
   ReactElement,
+  createRef,
   useCallback,
   useEffect,
   useMemo,
@@ -13,7 +14,8 @@ import Preview from "./Preview"
 import { countCorrectCharacters } from "../utils"
 
 const Typing = () => {
-  const inputRef = useRef<HTMLInputElement>(null)
+  // const inputRef = createRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const paragraphs = useMemo(
     () => [
