@@ -12,10 +12,10 @@ import {
 } from "react"
 import Preview from "./Preview"
 import { countCorrectCharacters } from "../utils"
+import useAutoFocus from "../hooks/useAutoFocus"
 
 const Typing = () => {
-  // const inputRef = createRef<HTMLInputElement>();
-  const inputRef = useRef<HTMLInputElement>(null);
+  // const inputRef = useRef<HTMLInputElement>(null)
 
   const paragraphs = useMemo(
     () => [
@@ -37,6 +37,7 @@ const Typing = () => {
   const [isTyping, setIsTyping] = useState(false)
   const [WPM, setWPM] = useState(0)
   const [CPM, setCPM] = useState(0)
+  const textInput = useAutoFocus()
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
   const CurrentPositionStyle = "border-l-2 border-yellow-400"
@@ -44,7 +45,7 @@ const Typing = () => {
   const loadParagraph = useCallback(() => {
     const ranIndex = Math.floor(Math.random() * paragraphs.length)
     setCurrentTextIndex(ranIndex)
-    document.addEventListener("keydown", () => inputRef.current?.focus())
+    // document.addEventListener("keydown", () => inputRef.current?.focus())
 
     const content = Array.from(paragraphs[ranIndex]).map((letter, index) => (
       <span
@@ -168,7 +169,8 @@ const Typing = () => {
         </h3>
         <div className="md:max-w-7xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-xl bg-neutral-800 md:shadow-lg">
           <input
-            ref={inputRef}
+            // ref={inputRef}
+            ref={textInput}
             type="text"
             className="-z-10 absolute"
             value={inpFieldValue}
