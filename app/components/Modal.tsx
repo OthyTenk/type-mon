@@ -1,7 +1,7 @@
 import React from "react"
 
 const Modal = () => {
-  return <div>Modal</div>
+  return <div>This base modal dialog</div>
 }
 
 export default Modal
