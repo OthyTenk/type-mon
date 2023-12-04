@@ -3,16 +3,15 @@
 import {
   ChangeEvent,
   ReactElement,
-  createRef,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react"
-import Preview from "./Preview"
+import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
-import useAutoFocus from "../hooks/useAutoFocus"
+import Preview from "./Preview"
 
 const Typing = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -37,6 +36,7 @@ const Typing = () => {
   const [isTyping, setIsTyping] = useState(false)
   const [WPM, setWPM] = useState(0)
   const [CPM, setCPM] = useState(0)
+  const typingResultModal = useTypingResultModal()
   // const textInput = useAutoFocus()
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
@@ -98,7 +98,7 @@ const Typing = () => {
   useEffect(() => {
     let cpm = (charIndex - mistakes) * (60 / (maxTime - timeLeft))
     cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
-    setCPM(cpm)
+    setCPM(Math.round(cpm))
 
     let wpm = Math.round(
       ((charIndex - mistakes) / 5 / (maxTime - timeLeft)) * 60
@@ -141,6 +141,7 @@ const Typing = () => {
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
     if (inpFieldValue.length > typingText.length || timeLeft < 1) {
       setIsTyping(false)
+      typingResultModal.onOpen()
       return
     }
 
