@@ -12,6 +12,7 @@ import {
 import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
 import Preview from "./Preview"
+import useResultStatistic from "../hooks/useResultStatistic"
 
 const Typing = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -29,15 +30,13 @@ const Typing = () => {
 
   const [typingText, setTypingText] = useState<string | ReactElement[]>("")
   const [inpFieldValue, setInpFieldValue] = useState("")
-  const maxTime = 60
-  const [timeLeft, setTimeLeft] = useState(maxTime)
+  const stat = useResultStatistic()
+  stat.maxTime = 60
+
+  const [timeLeft, setTimeLeft] = useState(stat.maxTime)
   const [charIndex, setCharIndex] = useState(0)
-  const [mistakes, setMistakes] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
-  const [WPM, setWPM] = useState(0)
-  const [CPM, setCPM] = useState(0)
   const typingResultModal = useTypingResultModal()
-  // const textInput = useAutoFocus()
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
   const CurrentPositionStyle = "border-l-2 border-yellow-400"
@@ -58,7 +57,6 @@ const Typing = () => {
     setTypingText(content)
     setInpFieldValue("")
     setCharIndex(0)
-    setMistakes(0)
     setIsTyping(false)
   }, [paragraphs])
 
@@ -96,17 +94,16 @@ const Typing = () => {
   }, [loadParagraph])
 
   useEffect(() => {
-    let cpm = (charIndex - mistakes) * (60 / (maxTime - timeLeft))
+    let cpm = (charIndex - stat.mistakes) * (60 / (stat.maxTime - timeLeft))
     cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
-    setCPM(Math.round(cpm))
+    stat.CPM = Math.round(cpm)
 
     let wpm = Math.round(
-      ((charIndex - mistakes) / 5 / (maxTime - timeLeft)) * 60
+      ((charIndex - stat.mistakes) / 5 / (stat.maxTime - timeLeft)) * 60
     )
-
     wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
-    setWPM(wpm)
-  }, [timeLeft, charIndex, mistakes])
+    stat.WPM = wpm
+  }, [timeLeft, charIndex, stat])
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined = undefined
@@ -128,13 +125,10 @@ const Typing = () => {
 
   const onTryAgain = () => {
     setIsTyping(false)
-    setTimeLeft(maxTime)
+    setTimeLeft(stat.maxTime)
     setCharIndex(0)
-    setMistakes(0)
     setTypingText("")
-    setCPM(0)
-    setWPM(0)
-
+    stat.setValues
     loadParagraph()
   }
 
@@ -155,10 +149,8 @@ const Typing = () => {
       paragraphs[currentTextIndex],
       inpFieldValue
     )
-    setMistakes(temp)
 
-    // console.log(temp);
-
+    stat.mistakes = temp
     setInpFieldValue(e.target.value)
   }
 
@@ -180,14 +172,11 @@ const Typing = () => {
           />
 
           {/* Render the Preview child component */}
-          <Preview
-            typingText={typingText}
-            timeLeft={timeLeft}
-            mistakes={mistakes}
-            WPM={WPM}
-            CPM={CPM}
-            onTryAgain={onTryAgain}
-          />
+          <div className="text-lg ml-2 font-thin">
+            {timeLeft}/{stat.maxTime}
+          </div>
+
+          <Preview typingText={typingText} onTryAgain={onTryAgain} />
         </div>
       </div>
     </>
