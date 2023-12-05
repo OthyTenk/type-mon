@@ -1,5 +1,4 @@
 "use client"
-
 import {
   ChangeEvent,
   ReactElement,
@@ -9,13 +8,15 @@ import {
   useRef,
   useState,
 } from "react"
+import { IoRefresh } from "react-icons/io5"
 import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
-import Preview from "./Preview"
+// import Preview from "./Preview"
 import useResultStatistic from "../hooks/useResultStatistic"
 
 const Typing = () => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const activeLetter = useRef<HTMLSpanElement>(null)
 
   const paragraphs = useMemo(
     () => [
@@ -49,7 +50,7 @@ const Typing = () => {
     const content = Array.from(paragraphs[ranIndex]).map((letter, index) => (
       <span
         key={index}
-        className={`${index === 0 ? CurrentPositionStyle : ""}`}>
+        className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
         {letter}
       </span>
     ))
@@ -77,7 +78,8 @@ const Typing = () => {
         return (
           <span
             key={index}
-            className={`${
+            ref={inpFieldValue.length === index ? activeLetter : null}
+            className={` ${
               inpFieldValue.length === index ? CurrentPositionStyle : ""
             } ${showTypeResult}`}>
             {letter !== " " ? letter : " "}
@@ -142,6 +144,7 @@ const Typing = () => {
     if (!isTyping) {
       setIsTyping(true)
     }
+    activeLetter?.current?.scrollIntoView({ behavior: "smooth" })
 
     setCharIndex(inpFieldValue.length)
 
@@ -157,10 +160,10 @@ const Typing = () => {
   return (
     <>
       <div className="p-0 m-0 min-h-screen min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
-        <h3 className="text-2xl font-semibold text-neutral-400 w-full text-center my-4">
+        <h3 className="text-2xl font-semibold text-neutral-400 w-full text-center mb-9">
           Type Mon
         </h3>
-        <div className="md:max-w-7xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-xl bg-neutral-800 md:shadow-lg">
+        <div className="md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl bg-neutral-800 md:shadow-lg">
           <input
             ref={inputRef}
             // ref={textInput}
@@ -172,11 +175,23 @@ const Typing = () => {
           />
 
           {/* Render the Preview child component */}
-          <div className="text-lg ml-2 font-thin">
-            {timeLeft}/{stat.maxTime}
-          </div>
+          <div className="text-xl ml-2 mb-8 font-semibold">{timeLeft}s</div>
 
-          <Preview typingText={typingText} onTryAgain={onTryAgain} />
+          {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
+
+          <div className="p-2">
+            <div className="pb-8 text-2xl text-neutral-300">
+              <div className="leading-8 h-24 overflow-hidden">{typingText}</div>
+            </div>
+
+            <div className="flex items-center mt-4 justify-center">
+              <button
+                onClick={onTryAgain}
+                className="p-4 outline-none cursor-pointer m-1 rounded-full hover:bg-neutral-700">
+                <IoRefresh size={24} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>
