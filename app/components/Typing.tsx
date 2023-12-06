@@ -14,7 +14,8 @@ import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
 // import Preview from "./Preview"
 import useResultStatistic from "../hooks/useResultStatistic"
-import Options from "./Options"
+import TimeTick from "./TimeTick"
+import useIsTyping from "../hooks/useIsTyping"
 
 const Typing = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,10 +41,10 @@ const Typing = () => {
   const [charIndex, setCharIndex] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
+  const { stopType, startType } = useIsTyping()
 
   const loadParagraph = useCallback(() => {
-    // const ranIndex = Math.floor(Math.random() * paragraphs.length)
-    const ranIndex = 0
+    const ranIndex = Math.floor(Math.random() * paragraphs.length)
     setCurrentTextIndex(ranIndex)
     document.addEventListener("keydown", () => inputRef.current?.focus())
 
@@ -61,8 +62,9 @@ const Typing = () => {
     setCharIndex(0)
     setIsTyping(false)
     setTimeLeft(stat.maxTime)
+    stopType()
     stat.setValues
-  }, [paragraphs, stat])
+  }, [paragraphs, stat, stopType])
 
   useEffect(() => {
     const content = Array.from(paragraphs[currentTextIndex]).map(
@@ -84,7 +86,6 @@ const Typing = () => {
             className={`${
               inpFieldValue.length === index ? CurrentPositionStyle : ""
             } ${resultColor}`}>
-            {/* {letter !== " " ? letter : " "} */}
             {letter}
           </span>
         )
@@ -114,13 +115,14 @@ const Typing = () => {
     if (timeLeft <= 0 || !isTyping) {
       clearInterval(interval)
       setIsTyping(false)
+      stopType()
       return
     }
 
     interval = setInterval(() => setTimeLeft(timeLeft - 1), 1000)
 
     return () => clearInterval(interval)
-  }, [isTyping, timeLeft])
+  }, [isTyping, timeLeft, stopType])
 
   const onTryAgain = () => {
     loadParagraph()
@@ -134,12 +136,14 @@ const Typing = () => {
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
     if (inpFieldValue.length > typingText.length || timeLeft < 1) {
       setIsTyping(false)
+      stopType()
       typingResultModal.onOpen()
       return
     }
 
     if (!isTyping) {
       setIsTyping(true)
+      startType()
     }
     activeLetter?.current?.scrollIntoView({ behavior: "smooth" })
 
@@ -156,23 +160,20 @@ const Typing = () => {
 
   return (
     <>
-      <div className="p-0 m-0 min-h-screen min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
-        <Options />
-        <h3 className="text-2xl font-semibold text-neutral-400 w-full text-center mb-9">
-          Type Mon
-        </h3>
-        <div className="md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl bg-neutral-800 md:shadow-lg">
+      <div className="p-0 my-10 min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
+        <div
+          className={`md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl ${
+            isTyping ? "bg-[#1E1E1E]" : "bg-neutral-800"
+          }  md:shadow-lg`}>
           <input
             ref={inputRef}
             type="text"
-            className="md:-z-10 absolute opacity-10"
+            className="md:-z-10 absolute opacity-10 mt-16 outline-none text-transparent h-28 border-transparent bg-transparent"
             autoFocus
             value={inpFieldValue}
             onChange={onTyping}
           />
-
-          {/* Render the Preview child component */}
-          <div className="text-xl ml-2 mb-8 font-semibold">{timeLeft}s</div>
+          <TimeTick timeLeft={timeLeft} />
           {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
 
           <div className="p-2">
