@@ -1,4 +1,5 @@
 "use client"
+
 import {
   ChangeEvent,
   ReactElement,
@@ -13,13 +14,14 @@ import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
 // import Preview from "./Preview"
 import useResultStatistic from "../hooks/useResultStatistic"
+import Options from "./Options"
 
 const Typing = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const activeLetter = useRef<HTMLSpanElement>(null)
-
   const paragraphs = useMemo(
     () => [
+      "Эрт урьд цагт нэгэн тосгонд энэ дэлхийд хосгүй хөөрхөн бяцхан охин байдаг санжээ. Эх нь охиндоо ухаан жолоогүй хайртай. Эмэг эх нь ээжээсээ нь ч илүү хайртай юм гэнэ. Эмэг эх нь нэгэнтээ ач охиндоо, зохисон гэдэг нь жигтэйхэн, хөөрхөн улаан малгай хийж өгчээ. Охин хаашаа ч явсан түүнийг өмсдөг болохоор хавь ойрынхон нь охиныг “Улаан малгайт” гэж нэрлэдэг байжээ. Нэг өдөр эх нь амтат хуушуур хийгээд охиндоо: Эмээгээ эргэж тойроод, энэ хуушуур, савтай тос хоёрыг аваачиж өгөөд ир гэж хэлжээ. Улаан малгайт хуушуур, савтай тос хоёрыг аваад эмээгийнхээ суудаг тосгон руу явжээ. Охиныг ой дундуур явж байтал нэг чоно тааралдаж гэнэ. Өлсгөлөн чоно охиныг идэх гэж арааных нь шүлс гооживч түлээчний мод цавчих сүхний дуунаас айгаад идэх зүрх хүрэхгүй байлаа. Чоно охинд дөхөж очоод:",
       "A plant is one of the most important living things that develop on the earth and is made up of stems, leaves, roots, and so on.Parts of Plants: The part of the plant that developed beneath the soil is referred to as root and the part that grows outside of the soil is known as shoot. The shoot consists of stems, branches, l eaves, fruits, and flowers. Plants are made up of six main parts: roots, stems, leaves, flowers, fruits, and seeds.",
       "The root is the part of the plant that grows in the soil. The primary root emerges from the embryo. Its primary function is to provide the plant stability in the earth and make other mineral salts from the earth available to the plant for various metabolic processes There are three types of roots i.e. Tap Root, Adventitious Roots, and Lateral Root. The roots arise from the parts of the plant and not from the rhizomes roots.",
       "Stem is the posterior part that remains above the ground and grows negatively geotropic. Internodes and nodes are found on the stem. Branch, bud, leaf, petiole, flower, and inflorescence on a node are all those parts of the plant that remain above the ground and undergo negative subsoil development. The trees have brown bark and the young and newly developed stems are green. The roots arise from the parts of plant and not from the rhizomes roots.",
@@ -28,28 +30,27 @@ const Typing = () => {
     ],
     []
   )
+  const typingResultModal = useTypingResultModal()
+  const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
+  const stat = useResultStatistic()
 
   const [typingText, setTypingText] = useState<string | ReactElement[]>("")
   const [inpFieldValue, setInpFieldValue] = useState("")
-  const stat = useResultStatistic()
-  stat.maxTime = 60
-
   const [timeLeft, setTimeLeft] = useState(stat.maxTime)
   const [charIndex, setCharIndex] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
-  const typingResultModal = useTypingResultModal()
-
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
-  const CurrentPositionStyle = "border-l-2 border-yellow-400"
 
   const loadParagraph = useCallback(() => {
-    const ranIndex = Math.floor(Math.random() * paragraphs.length)
+    // const ranIndex = Math.floor(Math.random() * paragraphs.length)
+    const ranIndex = 0
     setCurrentTextIndex(ranIndex)
     document.addEventListener("keydown", () => inputRef.current?.focus())
 
     const content = Array.from(paragraphs[ranIndex]).map((letter, index) => (
       <span
         key={index}
+        ref={index === 0 ? activeLetter : null}
         className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
         {letter}
       </span>
@@ -59,30 +60,32 @@ const Typing = () => {
     setInpFieldValue("")
     setCharIndex(0)
     setIsTyping(false)
-  }, [paragraphs])
+    setTimeLeft(stat.maxTime)
+    stat.setValues
+  }, [paragraphs, stat])
 
   useEffect(() => {
     const content = Array.from(paragraphs[currentTextIndex]).map(
       (letter, index) => {
-        let showTypeResult = ""
+        let resultColor = ""
         if (index < inpFieldValue.length) {
-          if (letter === inpFieldValue[index]) {
-            // showTypeResult = "bg-green-300 text-green-800";
-            showTypeResult = "text-green-400"
-          } else {
-            // showTypeResult = "bg-red-500 text-red-900";
-            showTypeResult = "text-red-500"
-          }
+          resultColor =
+            letter === inpFieldValue[index]
+              ? "text-green-400"
+              : letter === " "
+              ? "bg-red-500"
+              : "text-red-500"
         }
 
         return (
           <span
             key={index}
             ref={inpFieldValue.length === index ? activeLetter : null}
-            className={` ${
+            className={`${
               inpFieldValue.length === index ? CurrentPositionStyle : ""
-            } ${showTypeResult}`}>
-            {letter !== " " ? letter : " "}
+            } ${resultColor}`}>
+            {/* {letter !== " " ? letter : " "} */}
+            {letter}
           </span>
         )
       }
@@ -91,9 +94,7 @@ const Typing = () => {
     setTypingText(content)
   }, [inpFieldValue, paragraphs, currentTextIndex])
 
-  useEffect(() => {
-    loadParagraph()
-  }, [loadParagraph])
+  useEffect(() => loadParagraph(), [loadParagraph])
 
   useEffect(() => {
     let cpm = (charIndex - stat.mistakes) * (60 / (stat.maxTime - timeLeft))
@@ -108,7 +109,7 @@ const Typing = () => {
   }, [timeLeft, charIndex, stat])
 
   useEffect(() => {
-    let interval: string | number | NodeJS.Timeout | undefined = undefined
+    let interval: NodeJS.Timeout | undefined = undefined
 
     if (timeLeft <= 0 || !isTyping) {
       clearInterval(interval)
@@ -116,22 +117,18 @@ const Typing = () => {
       return
     }
 
-    interval = setInterval(() => {
-      setTimeLeft(timeLeft - 1)
-    }, 1000)
+    interval = setInterval(() => setTimeLeft(timeLeft - 1), 1000)
 
-    return () => {
-      clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [isTyping, timeLeft])
 
   const onTryAgain = () => {
-    setIsTyping(false)
-    setTimeLeft(stat.maxTime)
-    setCharIndex(0)
-    setTypingText("")
-    stat.setValues
     loadParagraph()
+
+    setInterval(
+      () => activeLetter?.current?.scrollIntoView({ behavior: "smooth" }),
+      500
+    )
   }
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
@@ -160,13 +157,13 @@ const Typing = () => {
   return (
     <>
       <div className="p-0 m-0 min-h-screen min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
+        <Options />
         <h3 className="text-2xl font-semibold text-neutral-400 w-full text-center mb-9">
           Type Mon
         </h3>
         <div className="md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl bg-neutral-800 md:shadow-lg">
           <input
             ref={inputRef}
-            // ref={textInput}
             type="text"
             className="md:-z-10 absolute opacity-10"
             autoFocus
@@ -176,18 +173,19 @@ const Typing = () => {
 
           {/* Render the Preview child component */}
           <div className="text-xl ml-2 mb-8 font-semibold">{timeLeft}s</div>
-
           {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
 
           <div className="p-2">
-            <div className="pb-8 text-2xl text-neutral-300">
+            <div className="pb-8 text-2xl text-neutral-300 font-mono">
               <div className="leading-8 h-24 overflow-hidden">{typingText}</div>
             </div>
 
             <div className="flex items-center mt-4 justify-center">
               <button
                 onClick={onTryAgain}
-                className="p-4 outline-none cursor-pointer m-1 rounded-full hover:bg-neutral-700">
+                className={`${
+                  isTyping && "hidden"
+                } p-4 outline-none cursor-pointer m-1 rounded-full hover:bg-neutral-700`}>
                 <IoRefresh size={24} />
               </button>
             </div>
