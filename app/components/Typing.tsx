@@ -142,6 +142,7 @@ const Typing = () => {
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
     if (inpFieldValue.length > typingText.length || timeLeft < 1) {
       setIsTyping(false)
+      inputRef.current?.blur()
       stopType()
       typingResultModal.onOpen()
       return
@@ -170,8 +171,7 @@ const Typing = () => {
         <div
           className={`md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl ${
             isTyping ? "bg-[#1E1E1E]" : "bg-neutral-800"
-          }  md:shadow-lg`}>
-          <div className=" flex flex-1 mt-40 md:mt-0"></div>
+          }  md:shadow-md flex flex-col flex-1 mt-20 md:mt-0`}>
           <TimeTick timeLeft={timeLeft} />
           {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
 
@@ -179,7 +179,7 @@ const Typing = () => {
             <input
               ref={inputRef}
               type="text"
-              className="md:-z-10 absolute caret-transparent opacity-10 mt-16 outline-none text-transparent h-28 border-transparent bg-transparent"
+              className="md:-z-10 absolute caret-transparent opacity-10 outline-none text-transparent h-28 border-transparent"
               autoFocus
               value={inpFieldValue}
               onChange={onTyping}
