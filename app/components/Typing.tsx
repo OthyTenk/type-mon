@@ -171,18 +171,19 @@ const Typing = () => {
           className={`md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl ${
             isTyping ? "bg-[#1E1E1E]" : "bg-neutral-800"
           }  md:shadow-lg`}>
-          <input
-            ref={inputRef}
-            type="text"
-            className="md:-z-10 absolute opacity-10 mt-16 outline-none text-transparent h-28 border-transparent bg-transparent"
-            autoFocus
-            value={inpFieldValue}
-            onChange={onTyping}
-          />
+          <div className=" flex flex-1 mt-40 md:mt-0"></div>
           <TimeTick timeLeft={timeLeft} />
           {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
 
-          <div className="p-2 mt-40 md:mt-0">
+          <div className="p-2">
+            <input
+              ref={inputRef}
+              type="text"
+              className="md:-z-10 absolute caret-transparent opacity-10 mt-16 outline-none text-transparent h-28 border-transparent bg-transparent"
+              autoFocus
+              value={inpFieldValue}
+              onChange={onTyping}
+            />
             <div className="pb-8 text-2xl text-neutral-300 font-mono">
               <div className="leading-8 h-24 overflow-hidden">{typingText}</div>
             </div>
