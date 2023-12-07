@@ -4,6 +4,7 @@ import "./globals.css"
 import React from "react"
 import TypingResultModal from "./components/modals/TypingResultModal"
 import Footer from "./components/Footer"
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <TypingResultModal />
         <main>{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   )
