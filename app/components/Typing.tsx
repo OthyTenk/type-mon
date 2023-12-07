@@ -172,7 +172,7 @@ const Typing = () => {
           className={`md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl ${
             isTyping ? "bg-[#1E1E1E]" : "bg-neutral-800"
           }  md:shadow-lg`}>
-          <div className="flex flex-1 mt-24 md:mt-0"></div>
+          <div className="flex flex-1 mt-28 md:mt-0" />
           <TimeTick timeLeft={timeLeft} />
           {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
 
