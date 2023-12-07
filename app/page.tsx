@@ -7,6 +7,7 @@ import { APP_NAME } from "./site_settings"
 
 const Page = () => {
   const typing = useIsTyping()
+
   return (
     <>
       <Options />
