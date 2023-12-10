@@ -24,11 +24,21 @@ const Button: FC<IButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transition w-full ${
-        outline ? "bg-white" : "bg-neutral-500"
+      className={`relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 dark:hover:opacity-50 transition w-full ${
+        outline
+          ? "bg-white dark:bg-neutral-700"
+          : "bg-neutral-500 dark:bg-neutral-500"
       } 
-      ${outline ? "border-black" : "bg-neutral-500"} 
-      ${outline ? "text-black" : "text-white"} 
+      ${
+        outline
+          ? "border-black dark:border-gray-500"
+          : "bg-neutral-500 dark:bg-neutral-800"
+      } 
+      ${
+        outline
+          ? "text-black dark:text-gray-300"
+          : "text-white dark:text-neutral-200"
+      } 
       ${small ? "text-sm" : "text-md"} 
       ${small ? "py-1" : "py-3"} 
       ${small ? "font-light" : "font-semibold"} 
