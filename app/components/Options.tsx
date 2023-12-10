@@ -1,12 +1,12 @@
 "use client"
 
 import { FC, useEffect } from "react"
-import useResultStatistic from "../hooks/useResultStatistic"
-import { DEFAULT_LANG, DEFAULT_TIME } from "../site_settings"
 import useIsTyping from "../hooks/useIsTyping"
+import useResultStatistic from "../hooks/useResultStatistic"
+import { DEFAULT_TIME } from "../site_settings"
+import Language from "./Language"
 
 const times = [30, 60, 90, 120]
-const languages = ["en", "mn"]
 
 const Options: FC = () => {
   const { maxTime, newMaxTime } = useResultStatistic()
@@ -45,30 +45,6 @@ const Options: FC = () => {
     )
   }
 
-  const renderedLanguages = ({
-    selectedLanguage,
-  }: {
-    selectedLanguage: string
-  }) => {
-    return (
-      <ul className="gap-2 flex">
-        {languages.map((lang, index) => (
-          <li
-            key={`time-${index}`}
-            className={`${
-              selectedLanguage === lang
-                ? isTyping
-                  ? "text-transparent"
-                  : "text-yellow-600"
-                : ""
-            }`}>
-            {lang}
-          </li>
-        ))}
-      </ul>
-    )
-  }
-
   return (
     <div
       className={`w-full md:mx-auto mt-16 md:mt-24 max-w-5xl flex flex-col mb-5 md:flex-row items-center justify-between md:px-3 ${
@@ -80,7 +56,7 @@ const Options: FC = () => {
       </div>
       <div className="flex flex-row gap-2">
         <span>Language:</span>
-        {renderedLanguages({ selectedLanguage: DEFAULT_LANG })}
+        <Language />
       </div>
     </div>
   )

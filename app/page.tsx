@@ -1,32 +1,22 @@
-"use client"
+import getTypingTextByLang, {
+  type ITypingTextByLangSlug,
+} from "./actions/getTypingData"
+import HomeSection from "./components/HomeSection"
+import { DEFAULT_LANG } from "./site_settings"
 
-import Image from "next/image"
-import Options from "./components/Options"
-import Typing from "./components/Typing"
-import useIsTyping from "./hooks/useIsTyping"
-import { APP_NAME } from "./site_settings"
-import Logo from "./components/Logo"
-
-const Page = () => {
-  const typing = useIsTyping()
-
-  return (
-    <>
-      <Options />
-
-      <div className="fill-neutral-400 flex gap-2 flex-row items-center justify-center mb-9">
-        <Logo className="object-fit h-8 w-20" />
-        <h3
-          className={`text-2xl font-semibold ${
-            !typing.isTyping ? "text-neutral-400" : "text-transparent"
-          } text-center`}>
-          {APP_NAME}
-        </h3>
-      </div>
-
-      <Typing />
-    </>
-  )
+interface IHomeProps {
+  searchParams: ITypingTextByLangSlug
 }
 
-export default Page
+const HomePage = async (searchParams: IHomeProps) => {
+  let langSlug: ITypingTextByLangSlug = { lang: DEFAULT_LANG }
+
+  if (searchParams.searchParams.lang) {
+    langSlug = searchParams.searchParams
+  }
+  const texts = await getTypingTextByLang(langSlug)
+
+  return <HomeSection texts={texts} />
+}
+
+export default HomePage
