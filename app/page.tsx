@@ -1,3 +1,4 @@
+import getCurrentUser from "./actions/getCurrentUser"
 import getTypingTextByLang, {
   type ITypingTextByLangSlug,
 } from "./actions/getTypingData"
@@ -14,9 +15,13 @@ const HomePage = async (searchParams: IHomeProps) => {
   if (searchParams.searchParams.lang) {
     langSlug = searchParams.searchParams
   }
-  const texts = await getTypingTextByLang(langSlug)
 
-  return <HomeSection texts={texts} />
+  let [currentUser, texts] = await Promise.all([
+    getCurrentUser(),
+    getTypingTextByLang(langSlug),
+  ])
+
+  return <HomeSection texts={texts} currentUser={currentUser} />
 }
 
 export default HomePage

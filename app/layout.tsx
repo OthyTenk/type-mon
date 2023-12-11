@@ -1,10 +1,12 @@
+import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import "./globals.css"
 import React from "react"
-import TypingResultModal from "./components/modals/TypingResultModal"
 import Footer from "./components/Footer"
-import { Analytics } from "@vercel/analytics/react"
+import RegisterModal from "./components/modals/RegisterModal"
+import TypingResultModal from "./components/modals/TypingResultModal"
+import "./globals.css"
+import ToasterProvider from "./providers/ToasterProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,7 +25,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.className} font-mono bg-[#1E1E1E] text-white h-full selection:bg-gray-800`}>
+        <ToasterProvider />
         <TypingResultModal />
+        <RegisterModal />
         <main>{children}</main>
         <Footer />
         <Analytics />
