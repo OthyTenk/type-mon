@@ -1,16 +1,17 @@
 "use client"
 
 import { FC, useCallback, useEffect, useState } from "react"
-import { SafeTypingText } from "../types"
+import { SafeTypingText, SafeUser } from "../types"
 import AppTitle from "./AppTitle"
-import Options from "./Options"
 import Typing from "./Typing"
+import Navbar from "./navbar/Navbar"
 
 interface IHomeSectionProps {
   texts: SafeTypingText[]
+  currentUser?: SafeUser | null
 }
 
-const HomeSection: FC<IHomeSectionProps> = ({ texts }) => {
+const HomeSection: FC<IHomeSectionProps> = ({ texts, currentUser = null }) => {
   const [currentText, setCurrentText] = useState("")
 
   const getRandomIndex = useCallback(() => {
@@ -26,7 +27,8 @@ const HomeSection: FC<IHomeSectionProps> = ({ texts }) => {
 
   return (
     <>
-      <Options />
+      <Navbar currentUser={currentUser} />
+      {/* <Options /> */}
       <AppTitle />
       <Typing currentText={currentText} changeText={getRandomIndex} />
     </>
