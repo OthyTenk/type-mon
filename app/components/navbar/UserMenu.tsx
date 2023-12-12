@@ -1,6 +1,5 @@
 "use client"
 
-import useRegisterModal from "@/app/hooks/useRegisterModal"
 import { SafeUser } from "@/app/types"
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -14,7 +13,6 @@ interface UserMenuProps {
 
 const UserMenu: FC<UserMenuProps> = ({ currentUser }) => {
   const router = useRouter()
-  const registerModal = useRegisterModal()
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -37,17 +35,32 @@ const UserMenu: FC<UserMenuProps> = ({ currentUser }) => {
           <div className="flex flex-col cursor-pointer">
             {currentUser ? (
               <>
+                {currentUser.isAdmin && (
+                  <>
+                    <MenuItem
+                      onClick={() => router.push("sentence")}
+                      label="New Sentence"
+                    />
+                    <MenuItem
+                      onClick={() => router.push("users")}
+                      label="Users"
+                    />
+                  </>
+                )}
                 <MenuItem
-                  onClick={() => router.push("sentence")}
-                  label="New Sentence"
+                  onClick={() => router.push("my-history")}
+                  label="My typing history"
                 />
+                <hr className="border-neutral-600" />
                 <MenuItem onClick={() => signOut()} label="Logout" />
               </>
             ) : (
               <>
-                {/* <MenuItem onClick={loginModal.onOpen} label="Login" />*/}
-                <MenuItem onClick={registerModal.onOpen} label="Sign up" />
-                <MenuItem onClick={() => {}} label="Login" />
+                <MenuItem onClick={() => router.push("auth")} label="Sign up" />
+                <MenuItem
+                  onClick={() => router.push("auth/login")}
+                  label="Login"
+                />
               </>
             )}
           </div>

@@ -1,15 +1,19 @@
 import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
-import Sentence from "../components/Sentence"
+import Users from "../components/Users"
 
-const SentencePage = async () => {
+const UsersPage = async () => {
   let currentUser = await getCurrentUser()
 
   if (!currentUser || !currentUser.isAdmin) {
     redirect("/auth/login")
   }
 
-  return <Sentence currentUser={currentUser} />
+  return (
+    <div>
+      <Users currentUser={currentUser} />
+    </div>
+  )
 }
 
-export default SentencePage
+export default UsersPage
