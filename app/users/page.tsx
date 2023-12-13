@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
 import Users from "../components/Users"
+import getUsers from "../actions/getUsers"
 
 const UsersPage = async () => {
   let currentUser = await getCurrentUser()
@@ -9,9 +10,11 @@ const UsersPage = async () => {
     redirect("/auth/login")
   }
 
+  let users = await getUsers()
+
   return (
     <div>
-      <Users currentUser={currentUser} />
+      <Users currentUser={currentUser} users={users} />
     </div>
   )
 }
