@@ -7,7 +7,7 @@ export type SafeTypingText = Omit<
 
 export type SafeUser = Omit<
   User,
-  "createdAt" | "updatedAt" | "emailVerified"
+  "createdAt" | "updatedAt" | "emailVerified" | "hashedPassword"
 > & {
   createdAt: string
   updatedAt: string
