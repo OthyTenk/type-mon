@@ -9,7 +9,7 @@ interface IParams {
 const POST = async (request: Request, { params }: { params: IParams }) => {
   const currentUser = await getCurrentUser()
   if (!currentUser) {
-    return null
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
   }
 
   const { userEmail } = params

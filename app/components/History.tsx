@@ -7,30 +7,42 @@ import Container from "./Container"
 import Heading from "./Heading"
 import Navbar from "./navbar/Navbar"
 
-interface IMyHistoryProps {
+interface IHistoryProps {
   currentUser?: SafeUser | null
+  title?: string
   histories30: SafeHistory[]
   histories60: SafeHistory[]
   histories90: SafeHistory[]
   histories120: SafeHistory[]
 }
 
-const MyHistory: FC<IMyHistoryProps> = ({
+const History: FC<IHistoryProps> = ({
   currentUser,
+  title = "My Typing Histories",
   histories30,
   histories60,
   histories90,
   histories120,
 }) => {
-  const renderedHistories = (histories: SafeHistory[]) => {
-    return (
+  const renderedHistories = (title: string, histories: SafeHistory[]) => {
+    if (!histories.length) {
+      return (
+        <div className="flex flex-col gap-4 py-4 bg-neutral-800 p-4 rounded-xl">
+          <p className="text-xl font-thin">
+            Not found record of the time {title}
+          </p>
+        </div>
+      )
+    }
+
+    const list = (
       <ul>
         {histories.map((history, index) => {
           return (
             <li key={index}>
               <div className="flex flex-row gap-2">
                 <div className="w-24">{index + 1}</div>
-                <div className="w-40">{history.userEmail}</div>
+                <div className="w-52">{history.userEmail}</div>
                 <div className="w-32">{history.time}</div>
                 <div className="w-32">{history.wpm}</div>
                 <div className="w-32">{history.cpm}</div>
@@ -41,38 +53,34 @@ const MyHistory: FC<IMyHistoryProps> = ({
         })}
       </ul>
     )
+
+    return (
+      <div className="flex flex-col gap-4 py-4 bg-neutral-800 p-4 rounded-xl">
+        <div className="text-xl font-semibold">Time: {title}</div>
+        {list}
+      </div>
+    )
   }
+
   return (
     <>
       <Navbar currentUser={currentUser} />
       <AppTitle />
       <Container>
-        <div className="px-2 md:px-44 gap-4">
-          <Heading title="My Typing Histories" />
+        <div className="px-2 md:px-44 space-y-3">
+          <Heading title={title} />
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">30</div>
-            {renderedHistories(histories30)}
-          </div>
+          {renderedHistories("30", histories30)}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">60</div>
-            {renderedHistories(histories60)}
-          </div>
+          {renderedHistories("60", histories60)}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">90</div>
-            {renderedHistories(histories90)}
-          </div>
+          {renderedHistories("90", histories90)}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">120</div>
-            {renderedHistories(histories120)}
-          </div>
+          {renderedHistories("120", histories120)}
         </div>
       </Container>
     </>
   )
 }
 
-export default MyHistory
+export default History

@@ -1,9 +1,6 @@
 import { MyHistory, TypeText, User } from "@prisma/client"
 
-export type SafeTypingText = Omit<
-  TypeText,
-  "length" | "createdAt" | "updatedAt"
->
+export type SafeTypingText = Omit<TypeText, "createdAt" | "updatedAt">
 
 export type SafeUser = Omit<
   User,

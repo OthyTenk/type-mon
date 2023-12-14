@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
-import MyHistory from "../components/MyHistory"
-import getMyHistories from "../actions/getMyHistories"
+import getMyHistories from "../actions/getHistories"
+import History from "../components/History"
 
-const MyHistoryPage = async () => {
+const HistoryPage = async () => {
   let currentUser = await getCurrentUser()
 
-  if (!currentUser) {
+  if (!currentUser || !currentUser.isAdmin) {
     redirect("/auth/login")
   }
 
@@ -16,16 +16,17 @@ const MyHistoryPage = async () => {
   const histories120 = await getMyHistories({ time: 120 })
 
   return (
-    <div>
-      <MyHistory
+    <>
+      <History
+        title="Typing Histories of all users"
         currentUser={currentUser}
         histories30={histories30}
         histories60={histories60}
         histories90={histories90}
         histories120={histories120}
       />
-    </div>
+    </>
   )
 }
 
-export default MyHistoryPage
+export default HistoryPage

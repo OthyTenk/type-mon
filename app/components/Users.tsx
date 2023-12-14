@@ -1,13 +1,13 @@
 "use client"
 
+import { formatDistance } from "date-fns"
 import { FC } from "react"
 import { SafeUser } from "../types"
 import AppTitle from "./AppTitle"
+import Button from "./Button"
 import Container from "./Container"
 import Heading from "./Heading"
 import Navbar from "./navbar/Navbar"
-import { format, formatDistance } from "date-fns"
-import Button from "./Button"
 
 interface IUsersProps {
   currentUser?: SafeUser | null
@@ -19,7 +19,7 @@ const Users: FC<IUsersProps> = ({ currentUser, users }) => {
     return (
       <ul className="flex flex-col gap-3">
         {users.map((user, index) => (
-          <li key={user.id}>
+          <li key={index}>
             <div className="flex flex-col md:flex-row gap-2 bg-neutral-800 items-center justify-center">
               <div className="flex items-center gap-2">
                 <div>{index + 1}</div>

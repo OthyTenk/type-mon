@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
+import getSentences from "../actions/getSentences"
 import Sentence from "../components/Sentence"
 
 const SentencePage = async () => {
@@ -9,7 +10,9 @@ const SentencePage = async () => {
     redirect("/auth/login")
   }
 
-  return <Sentence currentUser={currentUser} />
+  const sentences = await getSentences()
+
+  return <Sentence currentUser={currentUser} sentences={sentences} />
 }
 
 export default SentencePage

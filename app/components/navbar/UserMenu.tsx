@@ -38,19 +38,24 @@ const UserMenu: FC<UserMenuProps> = ({ currentUser }) => {
                 {currentUser.isAdmin && (
                   <>
                     <MenuItem
-                      onClick={() => router.push("sentence")}
+                      onClick={() => router.push("/sentence")}
                       label="New Sentence"
                     />
                     <MenuItem
-                      onClick={() => router.push("users")}
+                      onClick={() => router.push("/users")}
                       label="Users"
+                    />
+                    <MenuItem
+                      onClick={() => router.push("/history")}
+                      label="All typing history"
                     />
                   </>
                 )}
                 <MenuItem
-                  onClick={() => router.push("my-history")}
+                  onClick={() => router.push(`/history/${currentUser.email}`)}
                   label="My typing history"
                 />
+
                 <hr className="border-neutral-600" />
                 <MenuItem onClick={() => signOut()} label="Logout" />
               </>
@@ -58,7 +63,7 @@ const UserMenu: FC<UserMenuProps> = ({ currentUser }) => {
               <>
                 <MenuItem onClick={() => router.push("auth")} label="Sign up" />
                 <MenuItem
-                  onClick={() => router.push("auth/login")}
+                  onClick={() => router.push("/auth/login")}
                   label="Login"
                 />
               </>
