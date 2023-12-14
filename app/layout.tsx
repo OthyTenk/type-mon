@@ -11,9 +11,19 @@ import ToasterProvider from "./providers/ToasterProvider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Typing, Type trainer, Typing speed test",
+  title: {
+    default: "Typing, Type trainer, Typing speed test",
+    template: "%s - Typing, Type trainer, Typing speed test",
+  },
   description:
     "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
+  // twitter: {
+  //   card: "summary_large_image",
+  // },
+  openGraph: {
+    images: ["./opengraph-image.png"],
+    title: "Typing, Type trainer, Typing speed test",
+  },
 }
 
 export default function RootLayout({
