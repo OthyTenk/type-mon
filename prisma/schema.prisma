@@ -22,9 +22,8 @@ model User {
   favoriteIds    String[]  @db.ObjectId
   isAdmin        Boolean   @default(false)
 
-  accounts Account[]
-  // listings     Listing[]
-  // reservations Reservation[]
+  accounts  Account[]
+  MyHistory MyHistory[]
 
   @@map("users")
 }
@@ -69,4 +68,21 @@ model TypeText {
   updatedAt DateTime @default(now())
 
   @@map("typetexts")
+}
+
+model MyHistory {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  language String @default("mn")
+  wpm      Int    @default(0)
+  cpm      Int    @default(0)
+  mistakes Int    @default(0)
+  time     Int    @default(30)
+
+  userEmail String
+
+  user User @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("myhistory")
 }

@@ -30,7 +30,11 @@ const HomeSection: FC<IHomeSectionProps> = ({ texts, currentUser = null }) => {
       <Navbar currentUser={currentUser} />
       {/* <Options /> */}
       <AppTitle />
-      <Typing currentText={currentText} changeText={getRandomIndex} />
+      <Typing
+        currentText={currentText}
+        currentUserEmail={currentUser?.email ?? null}
+        changeText={getRandomIndex}
+      />
     </>
   )
 }
