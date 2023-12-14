@@ -15,10 +15,18 @@ export const metadata: Metadata = {
     default: "Typing, Type trainer, Typing speed test",
     template: "%s - Typing, Type trainer, Typing speed test",
   },
+  authors: [
+    { name: "Othy Tenk", url: "https:portfolio.agula.xyz" },
+    { name: "OkDo", url: "https:portfolio.agula.xyz" },
+  ],
+  creator: "Othy Tenk | OkDo",
+  alternates: {
+    canonical: ".",
+  },
   description:
     "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
   openGraph: {
-    images: ["/opengraph-image.png"],
+    images: "/opengraph-image.png",
   },
 }
 
