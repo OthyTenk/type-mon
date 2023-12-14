@@ -1,7 +1,7 @@
 import prisma from "@/libs/prismadb"
 import { SafeUser } from "../types"
 
-export default async function getUsers() {
+const getUsers = async () => {
   try {
     const users = await prisma.user.findMany({
       take: 20,
@@ -22,3 +22,5 @@ export default async function getUsers() {
     throw new Error(error as string)
   }
 }
+
+export default getUsers

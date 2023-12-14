@@ -1,18 +1,27 @@
 "use client"
 
+import useIsTyping from "@/app/hooks/useIsTyping"
 import useResultStatistic from "@/app/hooks/useResultStatistic"
 import useTypingResultModal from "@/app/hooks/useTypingResultModal"
-import Modal from "./Modal"
 import axios from "axios"
-import useIsTyping from "@/app/hooks/useIsTyping"
+import Button from "../Button"
+import Modal from "./Modal"
+import { useCallback } from "react"
+import { useRouter } from "next/navigation"
 
 const TypingResultModal = () => {
   const typingResultModal = useTypingResultModal()
+  const router = useRouter()
 
   const { currentUserEmail, mistakes, maxTime, WPM, CPM } = useResultStatistic()
   const { currentLanguage } = useIsTyping()
 
   const onSaveResult = async () => {
+    if (!currentUserEmail) {
+      typingResultModal.onClose()
+      return
+    }
+
     await axios
       .post(`/api/history/${currentUserEmail}`, {
         time: maxTime,
@@ -57,6 +66,27 @@ const TypingResultModal = () => {
     </div>
   )
 
+  const handleButtonClick = useCallback(() => {
+    typingResultModal.onClose()
+    router.push("/auth/login")
+  }, [typingResultModal, router])
+
+  const footerContent = (
+    <div className="mt-6 flex flex-col">
+      <hr />
+      <p className="mt-8 flex justify-center font-light">
+        If you log in this site. You can save your typing result.
+      </p>
+      <div className="mt-4 font-semibold text-lg">
+        <Button
+          label=" Login or register your account"
+          outline
+          onClick={handleButtonClick}
+        />
+      </div>
+    </div>
+  )
+
   return (
     <Modal
       title="Typing result"
@@ -65,6 +95,7 @@ const TypingResultModal = () => {
       onClose={onSaveResult}
       isOpen={typingResultModal.isOpen}
       body={bodyContent}
+      footer={currentUserEmail ? <></> : footerContent}
     />
   )
 }

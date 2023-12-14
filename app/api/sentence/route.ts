@@ -1,16 +1,23 @@
+import getCurrentUser from "@/app/actions/getCurrentUser"
 import prisma from "@/libs/prismadb"
 import { NextResponse } from "next/server"
 
 const POST = async (request: Request) => {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser || !currentUser.isAdmin) {
+    return NextResponse.error()
+  }
+
   const body = await request.json()
 
   const { sentence, language } = body
 
   if (!language || !sentence) {
-    throw new Error("Must fields not empty")
+    return NextResponse.error()
   }
 
-  await prisma.typeText.create({
+  const newSentence = await prisma.typeText.create({
     data: {
       sentence,
       language,
@@ -18,7 +25,7 @@ const POST = async (request: Request) => {
     },
   })
 
-  return NextResponse.json("OK")
+  return NextResponse.json(newSentence)
 }
 
 export { POST }

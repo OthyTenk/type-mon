@@ -6,9 +6,9 @@ export interface ITypingTextByLangSlug {
   lang?: string
 }
 
-export default async function getTypingTextByLang(
+const getTypingTextByLang = async (
   params: ITypingTextByLangSlug
-): Promise<SafeTypingText[]> {
+): Promise<SafeTypingText[]> => {
   const language = params ? params.lang : DEFAULT_LANG
 
   try {
@@ -27,3 +27,5 @@ export default async function getTypingTextByLang(
     throw new Error(error as string)
   }
 }
+
+export default getTypingTextByLang

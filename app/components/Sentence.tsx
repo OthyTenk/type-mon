@@ -1,22 +1,24 @@
 "use client"
 
-import { FC, useState } from "react"
-import { SafeUser } from "../types"
-import Navbar from "./navbar/Navbar"
-import AppTitle from "./AppTitle"
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 import axios from "axios"
+import { FC, useState } from "react"
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Input from "./inputs/Input"
+import { SafeTypingText, SafeUser } from "../types"
+import AppTitle from "./AppTitle"
+import Button from "./Button"
 import Container from "./Container"
 import Heading from "./Heading"
-import Button from "./Button"
 import CategoryInput from "./inputs/CategoryInput"
+import Input from "./inputs/Input"
+import Navbar from "./navbar/Navbar"
 
+import { useRouter } from "next/navigation"
 import { TbBeach } from "react-icons/tb"
 
 interface ISentenceProps {
   currentUser?: SafeUser | null
+  sentences: SafeTypingText[]
 }
 
 export const languages = [
@@ -32,8 +34,9 @@ export const languages = [
   },
 ]
 
-const Sentence: FC<ISentenceProps> = ({ currentUser }) => {
+const Sentence: FC<ISentenceProps> = ({ currentUser, sentences }) => {
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const {
     register,
@@ -74,10 +77,11 @@ const Sentence: FC<ISentenceProps> = ({ currentUser }) => {
       })
       .finally(() => {
         setIsLoading(false)
+        router.refresh()
       })
   }
 
-  const bodyContent = (
+  const newSentenceForm = (
     <div className="flex flex-col gap-4">
       <Input
         id="sentence"
@@ -108,16 +112,53 @@ const Sentence: FC<ISentenceProps> = ({ currentUser }) => {
     </div>
   )
 
+  const AllSentence = ({ sentences }: { sentences: SafeTypingText[] }) => {
+    if (!sentences.length) {
+      return <div>Not found</div>
+    }
+
+    return (
+      <ul className="space-y-3">
+        {sentences.map((sentence, index) => {
+          return (
+            <li key={index}>
+              <div className="flex p-3 bg-neutral-800 rounded-xl">
+                <div className="w-[40px] flex justify-center items-center">
+                  {index + 1}
+                </div>
+                <div className="w-4/5">{sentence.sentence.slice(0, 70)}</div>
+                <div className="w-14 flex items-center justify-center">
+                  {sentence.language}
+                </div>
+                <div className="w-14 flex items-center justify-center">
+                  {sentence.length}
+                </div>
+                <div className="flex items-center justify-center">Delete</div>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    )
+  }
+
   return (
     <>
       <Navbar currentUser={currentUser} />
       <AppTitle />
       <Container>
         <div className="px-2 md:px-44">
-          {currentUser?.name}
           <Heading title="Add New Sentence" />
 
-          {bodyContent}
+          {newSentenceForm}
+        </div>
+
+        <div className="mt-10 border-b-neutral-600 border" />
+
+        <div className="px-2 mt-8 md:px-44">
+          <Heading title={`All Sentence (${sentences?.length})`} />
+
+          <AllSentence sentences={sentences} />
         </div>
       </Container>
     </>
