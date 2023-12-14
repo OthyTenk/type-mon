@@ -23,10 +23,24 @@ export const metadata: Metadata = {
   alternates: {
     canonical: ".",
   },
+  keywords: ["Typing speed test", "Typing trainer", "Typing test"],
   description:
     "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
   openGraph: {
-    images: "/opengraph-image.png",
+    title: "Typing, Type trainer, Typing speed test",
+    description:
+      "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
+    url: "https://typemon.agula.xyz",
+    siteName: "Type Mon",
+    type: "website",
+  },
+  twitter: {
+    title: "Typing, Type trainer, Typing speed test",
+    description:
+      "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
+    site: "Type Mon",
+    siteId: "@typemon",
+    card: "summary_large_image",
   },
 }
 
