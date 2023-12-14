@@ -1,4 +1,4 @@
-import { TypeText, User } from "@prisma/client"
+import { MyHistory, TypeText, User } from "@prisma/client"
 
 export type SafeTypingText = Omit<
   TypeText,
@@ -7,9 +7,11 @@ export type SafeTypingText = Omit<
 
 export type SafeUser = Omit<
   User,
-  "createdAt" | "updatedAt" | "emailVerified" | "hashedPassword"
+  "id" | "createdAt" | "updatedAt" | "emailVerified" | "hashedPassword"
 > & {
   createdAt: string
   updatedAt: string
   emailVerified: string | null
 }
+
+export type SafeHistory = MyHistory

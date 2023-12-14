@@ -17,11 +17,16 @@ import { countCorrectCharacters } from "../utils"
 import TimeTick from "./TimeTick"
 
 interface ITypingProps {
+  currentUserEmail: string | null
   currentText: string
   changeText: () => void
 }
 
-const Typing: FC<ITypingProps> = ({ currentText, changeText }) => {
+const Typing: FC<ITypingProps> = ({
+  currentUserEmail = null,
+  currentText,
+  changeText,
+}) => {
   const { stopType, startType } = useIsTyping()
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -137,6 +142,8 @@ const Typing: FC<ITypingProps> = ({ currentText, changeText }) => {
     if (inpFieldValue.length > typingText.length || timeLeft < 1) {
       setIsTyping(false)
       inputRef.current?.blur()
+
+      stat.currentUserEmail = currentUserEmail
 
       stopType()
       typingResultModal.onOpen()

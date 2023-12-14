@@ -2,7 +2,6 @@ import bcrypt from "bcrypt"
 import { NextResponse } from "next/server"
 
 import prisma from "@/libs/prismadb"
-import { STATUS_CODES } from "http"
 
 const POST = async (request: Request) => {
   const body = await request.json()

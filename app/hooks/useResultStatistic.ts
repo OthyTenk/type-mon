@@ -6,7 +6,14 @@ interface IResultStatisticStore {
   WPM: number
   mistakes: number
   maxTime: number
-  setValues: { cpm?: number; wpm?: number; mistakes?: number; maxTime?: number }
+  currentUserEmail: string | null
+  setValues: {
+    cpm?: number
+    wpm?: number
+    mistakes?: number
+    maxTime?: number
+    currentUserEmail?: string | null
+  }
   newMaxTime: (time: number) => void
 }
 
@@ -15,8 +22,21 @@ const useResultStatistic = create<IResultStatisticStore>((set) => ({
   WPM: 0,
   mistakes: 0,
   maxTime: DEFAULT_TIME,
-  setValues: ({ cpm = 0, wpm = 0, mistakes = 0, maxTime = 0 }) =>
-    set({ CPM: cpm, WPM: wpm, mistakes: mistakes, maxTime: maxTime }),
+  currentUserEmail: null,
+  setValues: ({
+    cpm = 0,
+    wpm = 0,
+    mistakes = 0,
+    maxTime = 0,
+    currentUserEmail = "",
+  }) =>
+    set({
+      CPM: cpm,
+      WPM: wpm,
+      mistakes: mistakes,
+      maxTime: maxTime,
+      currentUserEmail: currentUserEmail,
+    }),
   newMaxTime: (time) => set({ maxTime: time }),
 }))
 
