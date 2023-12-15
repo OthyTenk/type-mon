@@ -21,9 +21,16 @@ export const metadata: Metadata = {
   ],
   creator: "Othy Tenk | OkDo",
   alternates: {
-    canonical: ".",
+    canonical: "https://typemon.agula.xyz",
   },
-  keywords: ["Typing speed test", "Typing trainer", "Typing test"],
+  keywords: [
+    "Typing speed test",
+    "Typing trainer",
+    "Typing test",
+    "Typing Mongolia",
+    "Mongolia typing trainer",
+    "Mongolia Typing",
+  ],
   description:
     "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
   openGraph: {
@@ -33,6 +40,7 @@ export const metadata: Metadata = {
     url: "https://typemon.agula.xyz",
     siteName: "Type Mon",
     type: "website",
+    images: "https://typemon.agula.xyz/opengraph-image.png",
   },
   twitter: {
     title: "Typing, Type trainer, Typing speed test",
@@ -41,6 +49,7 @@ export const metadata: Metadata = {
     site: "Type Mon",
     siteId: "@typemon",
     card: "summary_large_image",
+    images: "https://typemon.agula.xyz/twitter-image.png",
   },
 }
 

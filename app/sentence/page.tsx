@@ -2,6 +2,14 @@ import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
 import getSentences from "../actions/getSentences"
 import Sentence from "../components/Sentence"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    nocache: true,
+  },
+}
 
 const SentencePage = async () => {
   let currentUser = await getCurrentUser()

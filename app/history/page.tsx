@@ -2,6 +2,14 @@ import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
 import getMyHistories from "../actions/getHistories"
 import History from "../components/History"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    nocache: true,
+  },
+}
 
 const HistoryPage = async () => {
   let currentUser = await getCurrentUser()
