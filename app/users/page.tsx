@@ -2,6 +2,14 @@ import { redirect } from "next/navigation"
 import getCurrentUser from "../actions/getCurrentUser"
 import Users from "../components/Users"
 import getUsers from "../actions/getUsers"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    nocache: true,
+  },
+}
 
 const UsersPage = async () => {
   let currentUser = await getCurrentUser()
