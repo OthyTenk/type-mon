@@ -1,5 +1,8 @@
 {
   "default_time": 60,
   "default_lang": "mn",
-  "app_name": "Type Mon"
+  "app_name": "Type Mon",
+  "site_url": "https://typemon.agula.xyz/",
+  "site_title": "Typing, Type trainer, Typing speed test",
+  "site_description": "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test"
 }
