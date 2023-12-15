@@ -7,21 +7,27 @@ import RegisterModal from "./components/modals/RegisterModal"
 import TypingResultModal from "./components/modals/TypingResultModal"
 import "./globals.css"
 import ToasterProvider from "./providers/ToasterProvider"
+import {
+  APP_NAME,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  SITE_URL,
+} from "./site_settings"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: {
-    default: "Typing, Type trainer, Typing speed test",
-    template: "%s - Typing, Type trainer, Typing speed test",
+    default: SITE_TITLE,
+    template: `%s - ${SITE_TITLE}`,
   },
   authors: [
-    { name: "Othy Tenk", url: "https:portfolio.agula.xyz" },
-    { name: "OkDo", url: "https:portfolio.agula.xyz" },
+    { name: "Othy Tenk", url: "https://portfolio.agula.xyz" },
+    { name: "OkDo", url: "https://portfolio.agula.xyz" },
   ],
   creator: "Othy Tenk | OkDo",
   alternates: {
-    canonical: "https://typemon.agula.xyz",
+    canonical: SITE_URL,
   },
   keywords: [
     "Typing speed test",
@@ -31,25 +37,22 @@ export const metadata: Metadata = {
     "Mongolia typing trainer",
     "Mongolia Typing",
   ],
-  description:
-    "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Typing, Type trainer, Typing speed test",
-    description:
-      "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
-    url: "https://typemon.agula.xyz",
-    siteName: "Type Mon",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: APP_NAME,
     type: "website",
-    images: "https://typemon.agula.xyz/opengraph-image.png",
+    images: `${SITE_URL}opengraph-image.png`,
   },
   twitter: {
-    title: "Typing, Type trainer, Typing speed test",
-    description:
-      "agula typing, typing speed game, Improve your Typing Speed, free typing test, Mongolian typing test",
-    site: "Type Mon",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    site: APP_NAME,
     siteId: "@typemon",
     card: "summary_large_image",
-    images: "https://typemon.agula.xyz/twitter-image.png",
+    images: `${SITE_URL}twitter-image.png`,
   },
 }
 
