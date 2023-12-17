@@ -43,16 +43,17 @@ const Typing: FC<ITypingProps> = ({
   const [isTyping, setIsTyping] = useState(false)
 
   const loadParagraph = useCallback(() => {
-    const content = Array.from(currentText).map((letter, index) => (
-      <span
-        key={index}
-        ref={index === 0 ? activeLetter : null}
-        className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
-        {letter}
-      </span>
-    ))
+    // const content = Array.from(currentText).map((letter, index) => (
+    //   <span
+    //     key={index}
+    //     ref={index === 0 ? activeLetter : null}
+    //     className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
+    //     {letter}
+    //   </span>
+    // ))
 
-    setTypingText(content)
+    // setTypingText(content)
+    setTypingText(currentText)
     setInpFieldValue("")
     setCharIndex(0)
     setIsTyping(false)
@@ -91,7 +92,8 @@ const Typing: FC<ITypingProps> = ({
   }, [inpFieldValue, currentText])
 
   const setInputFocus = () => {
-    document.addEventListener("keydown", () => inputRef.current?.focus())
+    // document.addEventListener("keydown", () => inputRef.current?.focus())
+    return inputRef.current?.focus()
   }
 
   useEffect(() => {
@@ -175,6 +177,7 @@ const Typing: FC<ITypingProps> = ({
           <div className="p-2">
             <input
               ref={inputRef}
+              autoComplete="off"
               type="text"
               className="md:-z-10 absolute caret-transparent opacity-10 outline-none text-transparent h-28 border-transparent bg-transparent"
               autoFocus

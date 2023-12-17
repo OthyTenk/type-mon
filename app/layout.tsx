@@ -25,9 +25,10 @@ export const metadata: Metadata = {
     { name: "Othy Tenk", url: "https://portfolio.agula.xyz" },
     { name: "OkDo", url: "https://portfolio.agula.xyz" },
   ],
+  metadataBase: new URL(SITE_URL.substring(0, SITE_URL.length - 1)),
   creator: "Othy Tenk | OkDo",
   alternates: {
-    canonical: SITE_URL,
+    canonical: "/",
   },
   keywords: [
     "Typing speed test",
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: APP_NAME,
     type: "website",
-    images: `${SITE_URL}opengraph-image.png`,
+    images: "/opengraph-image.png",
   },
   twitter: {
     title: SITE_TITLE,
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
     site: APP_NAME,
     siteId: "@typemon",
     card: "summary_large_image",
-    images: `${SITE_URL}twitter-image.png`,
+    images: "/twitter-image.png",
   },
 }
 
