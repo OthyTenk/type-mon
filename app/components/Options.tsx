@@ -1,27 +1,19 @@
 "use client"
 
-import { FC, useEffect } from "react"
-import useIsTyping from "../hooks/useIsTyping"
-import useResultStatistic from "../hooks/useResultStatistic"
-import { DEFAULT_TIME } from "../site_settings"
+import { FC } from "react"
+
+import useGlobal from "@/store/useGlobal"
+import { BiTimer } from "react-icons/bi"
+import { GrLanguage } from "react-icons/gr"
 import Language from "./Language"
 
 const times = [30, 60, 90, 120]
 
 const Options: FC = () => {
-  const { maxTime, newMaxTime } = useResultStatistic()
-  const { isTyping } = useIsTyping()
-  const selectedTime =
-    maxTime > 0 && maxTime !== undefined ? maxTime : DEFAULT_TIME
-
-  useEffect(() => {
-    if (maxTime === undefined) {
-      newMaxTime(DEFAULT_TIME)
-    }
-  }, [newMaxTime, maxTime])
+  const { isTyping, time, newTime } = useGlobal()
 
   const onChangeTime = (value: number) => {
-    newMaxTime(value)
+    newTime(value)
   }
 
   const renderedTimes = ({ selectedTime }: { selectedTime: number }) => {
@@ -50,12 +42,13 @@ const Options: FC = () => {
       className={`w-full md:mx-auto mt-16 md:mt-24 max-w-5xl flex flex-col mb-5 md:flex-row items-center justify-between md:px-3 ${
         isTyping ? "text-transparent" : ""
       }`}>
-      <div className="flex flex-row gap-2">
-        <span>Time:</span>
-        {renderedTimes({ selectedTime })}
+      <div className="flex flex-row gap-2 items-center">
+        <BiTimer size={28} />
+
+        {renderedTimes({ selectedTime: time })}
       </div>
-      <div className="flex flex-row gap-2">
-        <span>Language:</span>
+      <div className="flex flex-row gap-2 items-center">
+        <GrLanguage size={20} />
         <Language />
       </div>
     </div>

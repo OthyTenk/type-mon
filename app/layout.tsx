@@ -32,8 +32,11 @@ export const metadata: Metadata = {
   },
   keywords: [
     "Typing speed test",
+    "Typing speed test mongolia",
+    "Typing speed mongolia",
     "Typing trainer",
     "Typing test",
+    "Typing game",
     "Typing Mongolia",
     "Mongolia typing trainer",
     "Mongolia Typing",

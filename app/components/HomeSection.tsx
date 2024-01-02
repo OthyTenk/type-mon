@@ -5,6 +5,7 @@ import { SafeTypingText, SafeUser } from "../types"
 import AppTitle from "./AppTitle"
 import Typing from "./Typing"
 import Navbar from "./navbar/Navbar"
+import useGlobal from "@/store/useGlobal"
 
 interface IHomeSectionProps {
   texts: SafeTypingText[]
@@ -12,6 +13,7 @@ interface IHomeSectionProps {
 }
 
 const HomeSection: FC<IHomeSectionProps> = ({ texts, currentUser = null }) => {
+  const { language } = useGlobal()
   const [currentText, setCurrentText] = useState("")
 
   const getRandomIndex = useCallback(() => {
@@ -28,7 +30,6 @@ const HomeSection: FC<IHomeSectionProps> = ({ texts, currentUser = null }) => {
   return (
     <>
       <Navbar currentUser={currentUser} />
-      {/* <Options /> */}
       <AppTitle />
       <Typing
         currentText={currentText}

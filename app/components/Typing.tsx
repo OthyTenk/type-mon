@@ -10,7 +10,8 @@ import {
   useState,
 } from "react"
 import { IoRefresh } from "react-icons/io5"
-import useIsTyping from "../hooks/useIsTyping"
+
+import useGlobal from "@/store/useGlobal"
 import useResultStatistic from "../hooks/useResultStatistic"
 import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
@@ -28,7 +29,7 @@ const Typing: FC<ITypingProps> = ({
   currentText,
   changeText,
 }) => {
-  const { stopType, startType } = useIsTyping()
+  const { stopType, startType, time } = useGlobal()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const activeLetterRef = useRef<HTMLSpanElement>()
@@ -39,7 +40,7 @@ const Typing: FC<ITypingProps> = ({
 
   const [typingText, setTypingText] = useState<string | ReactElement[]>("")
   const [inpFieldValue, setInpFieldValue] = useState("")
-  const [timeLeft, setTimeLeft] = useState(stat.maxTime)
+  const [timeLeft, setTimeLeft] = useState(time)
   const [charIndex, setCharIndex] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
 
@@ -59,10 +60,10 @@ const Typing: FC<ITypingProps> = ({
     setInpFieldValue("")
     setCharIndex(0)
     setIsTyping(false)
-    setTimeLeft(stat.maxTime)
+    setTimeLeft(time)
     stopType()
     stat.setValues
-  }, [stat, stopType, currentText])
+  }, [stat, stopType, time, currentText])
 
   useEffect(() => {
     if (!currentText) return
@@ -109,16 +110,16 @@ const Typing: FC<ITypingProps> = ({
   }, [loadParagraph])
 
   useEffect(() => {
-    let cpm = (charIndex - stat.mistakes) * (60 / (stat.maxTime - timeLeft))
+    let cpm = (charIndex - stat.mistakes) * (60 / (time - timeLeft))
     cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
     stat.CPM = Math.round(cpm)
 
     let wpm = Math.round(
-      ((charIndex - stat.mistakes) / 5 / (stat.maxTime - timeLeft)) * 60
+      ((charIndex - stat.mistakes) / 5 / (time - timeLeft)) * 60
     )
     wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
     stat.WPM = wpm
-  }, [timeLeft, charIndex, stat])
+  }, [timeLeft, charIndex, stat, time])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined

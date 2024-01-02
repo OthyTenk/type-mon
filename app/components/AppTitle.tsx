@@ -1,12 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import useIsTyping from "../hooks/useIsTyping"
+
 import { APP_NAME } from "../site_settings"
 import Logo from "./Logo"
+import useGlobal from "@/store/useGlobal"
 
 const AppTitle = () => {
-  const typing = useIsTyping()
+  const typing = useGlobal()
 
   return (
     <Link href="/">

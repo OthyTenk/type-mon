@@ -1,26 +1,16 @@
 "use client"
 
+import useGlobal from "@/store/useGlobal"
 import { useRouter, useSearchParams } from "next/navigation"
 import qs from "query-string"
 import { useCallback, useEffect } from "react"
-import useIsTyping from "../hooks/useIsTyping"
 
 const languages = ["en", "mn"]
 
 const Language = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { isTyping, currentLanguage, changeLanguage } = useIsTyping()
-
-  useEffect(() => {
-    const paramLang = searchParams.get("lang")
-
-    if (!paramLang) return
-
-    if (currentLanguage !== paramLang) {
-      changeLanguage(paramLang)
-    }
-  }, [changeLanguage, currentLanguage, searchParams])
+  const { language, isTyping, changeLanguage } = useGlobal()
 
   const onChangeLanguage = useCallback(
     (selectedLanguage: string) => {
@@ -40,13 +30,17 @@ const Language = () => {
     [router, changeLanguage]
   )
 
+  useEffect(() => {
+    onChangeLanguage(language)
+  }, [changeLanguage, onChangeLanguage, searchParams, language, router])
+
   return (
     <ul className="gap-2 flex">
       {languages.map((lang, index) => (
         <li
           key={`time-${index}`}
           className={`${
-            currentLanguage === lang
+            language === lang
               ? isTyping
                 ? "text-transparent"
                 : "text-yellow-600 underline"
