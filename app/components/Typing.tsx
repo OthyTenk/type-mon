@@ -14,6 +14,7 @@ import useIsTyping from "../hooks/useIsTyping"
 import useResultStatistic from "../hooks/useResultStatistic"
 import useTypingResultModal from "../hooks/useTypingResultModal"
 import { countCorrectCharacters } from "../utils"
+import Cursor from "./Cursor"
 import TimeTick from "./TimeTick"
 
 interface ITypingProps {
@@ -30,7 +31,7 @@ const Typing: FC<ITypingProps> = ({
   const { stopType, startType } = useIsTyping()
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const activeLetter = useRef<HTMLSpanElement>(null)
+  const activeLetterRef = useRef<HTMLSpanElement>()
 
   const typingResultModal = useTypingResultModal()
   const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
@@ -43,17 +44,18 @@ const Typing: FC<ITypingProps> = ({
   const [isTyping, setIsTyping] = useState(false)
 
   const loadParagraph = useCallback(() => {
-    // const content = Array.from(currentText).map((letter, index) => (
-    //   <span
-    //     key={index}
-    //     ref={index === 0 ? activeLetter : null}
-    //     className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
-    //     {letter}
-    //   </span>
-    // ))
+    const content = Array.from(currentText).map((letter, index) => (
+      <span
+        key={index}
+        ref={(element) =>
+          index === 0 && (activeLetterRef.current = element || undefined)
+        }
+        className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
+        {letter}
+      </span>
+    ))
+    setTypingText(content)
 
-    // setTypingText(content)
-    setTypingText(currentText)
     setInpFieldValue("")
     setCharIndex(0)
     setIsTyping(false)
@@ -79,7 +81,10 @@ const Typing: FC<ITypingProps> = ({
       return (
         <span
           key={index}
-          ref={inpFieldValue.length === index ? activeLetter : null}
+          ref={(element) =>
+            inpFieldValue.length === index &&
+            (activeLetterRef.current = element || undefined)
+          }
           className={`${
             inpFieldValue.length === index ? CurrentPositionStyle : ""
           } ${resultColor}`}>
@@ -92,7 +97,6 @@ const Typing: FC<ITypingProps> = ({
   }, [inpFieldValue, currentText])
 
   const setInputFocus = () => {
-    // document.addEventListener("keydown", () => inputRef.current?.focus())
     return inputRef.current?.focus()
   }
 
@@ -135,7 +139,7 @@ const Typing: FC<ITypingProps> = ({
     changeText()
 
     setInterval(
-      () => activeLetter?.current?.scrollIntoView({ behavior: "smooth" }),
+      () => activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" }),
       500
     )
   }
@@ -157,7 +161,7 @@ const Typing: FC<ITypingProps> = ({
       startType()
     }
 
-    activeLetter?.current?.scrollIntoView({ behavior: "smooth" })
+    activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" })
     setCharIndex(inpFieldValue.length)
     stat.mistakes = countCorrectCharacters(currentText, inpFieldValue)
     setInpFieldValue(e.target.value)
@@ -172,7 +176,6 @@ const Typing: FC<ITypingProps> = ({
           }  md:shadow-lg`}>
           <div className="flex flex-1 mt-28 md:mt-0" />
           <TimeTick timeLeft={timeLeft} />
-          {/* <Preview typingText={typingText} onTryAgain={onTryAgain} /> */}
 
           <div className="p-2">
             <input
@@ -182,10 +185,17 @@ const Typing: FC<ITypingProps> = ({
               className="md:-z-10 absolute caret-transparent opacity-10 outline-none text-transparent h-28 border-transparent bg-transparent"
               autoFocus
               value={inpFieldValue}
+              tabIndex={-1}
               onChange={onTyping}
             />
-            <div className="pb-8 text-2xl text-neutral-300 font-mono">
-              <div className="leading-8 h-24 overflow-hidden">{typingText}</div>
+            <div className="relative pb-8 text-2xl text-neutral-300 font-mono">
+              {activeLetterRef ? (
+                <Cursor activeLetterRef={activeLetterRef} />
+              ) : null}
+
+              <div className="whitespace-break-spaces leading-8 h-24 overflow-hidden">
+                {typingText}
+              </div>
             </div>
 
             <div className="flex items-center mt-4 justify-center">

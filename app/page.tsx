@@ -2,6 +2,7 @@ import getCurrentUser from "./actions/getCurrentUser"
 import getTypingTextByLang, {
   type ITypingTextByLangSlug,
 } from "./actions/getTypingData"
+import Client from "./components/Client"
 import HomeSection from "./components/HomeSection"
 import { DEFAULT_LANG } from "./site_settings"
 
@@ -21,7 +22,11 @@ const HomePage = async (searchParams: IHomeProps) => {
     getTypingTextByLang(langSlug),
   ])
 
-  return <HomeSection texts={texts} currentUser={currentUser} />
+  return (
+    <Client>
+      <HomeSection texts={texts} currentUser={currentUser} />
+    </Client>
+  )
 }
 
 export default HomePage
