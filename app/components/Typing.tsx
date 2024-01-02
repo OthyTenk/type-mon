@@ -29,7 +29,7 @@ const Typing: FC<ITypingProps> = ({
   currentText,
   changeText,
 }) => {
-  const { stopType, startType, time } = useGlobal()
+  const { stopType, startType, time, language } = useGlobal()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const activeLetterRef = useRef<HTMLSpanElement>()

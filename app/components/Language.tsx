@@ -1,7 +1,7 @@
 "use client"
 
 import useGlobal from "@/store/useGlobal"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import qs from "query-string"
 import { useCallback, useEffect } from "react"
 
@@ -9,14 +9,13 @@ const languages = ["en", "mn"]
 
 const Language = () => {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const { language, isTyping, changeLanguage } = useGlobal()
 
   const onChangeLanguage = useCallback(
     (selectedLanguage: string) => {
       const url = qs.stringifyUrl(
         {
-          url: "/",
+          url: "",
           query: {
             lang: selectedLanguage,
           },
@@ -32,7 +31,7 @@ const Language = () => {
 
   useEffect(() => {
     onChangeLanguage(language)
-  }, [changeLanguage, onChangeLanguage, searchParams, language, router])
+  }, [onChangeLanguage, language])
 
   return (
     <ul className="gap-2 flex">

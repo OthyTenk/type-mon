@@ -2,19 +2,19 @@
 
 import useResultStatistic from "@/app/hooks/useResultStatistic"
 import useTypingResultModal from "@/app/hooks/useTypingResultModal"
+import useGlobal from "@/store/useGlobal"
 import axios from "axios"
+import { useRouter } from "next/navigation"
+import { useCallback } from "react"
 import Button from "../Button"
 import Modal from "./Modal"
-import { useCallback } from "react"
-import { useRouter } from "next/navigation"
-import useGlobal from "@/store/useGlobal"
 
 const TypingResultModal = () => {
   const typingResultModal = useTypingResultModal()
   const router = useRouter()
 
   const { currentUserEmail, mistakes, WPM, CPM } = useResultStatistic()
-  const { language, maxTime } = useGlobal()
+  const { language, time } = useGlobal()
 
   const onSaveResult = async () => {
     if (!currentUserEmail) {
@@ -24,7 +24,7 @@ const TypingResultModal = () => {
 
     await axios
       .post(`/api/history/${currentUserEmail}`, {
-        time: maxTime,
+        time,
         mistakes,
         wpm: WPM,
         cpm: CPM,
@@ -47,7 +47,7 @@ const TypingResultModal = () => {
         <li className="my-0 mx-3">
           <p className="m-1 text-xs">Time Left:</p>
           <span className="text-lg">
-            <b>{maxTime}</b>s
+            <b>{time}</b>s
           </span>
         </li>
         <li className="my-0 mx-3">
