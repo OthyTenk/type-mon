@@ -6,36 +6,10 @@ import useGlobal from "@/store/useGlobal"
 import { BiTimer } from "react-icons/bi"
 import { GrLanguage } from "react-icons/gr"
 import Language from "./Language"
-
-const times = [30, 60, 90, 120]
+import Times from "./Times"
 
 const Options: FC = () => {
-  const { isTyping, time, newTime } = useGlobal()
-
-  const onChangeTime = (value: number) => {
-    newTime(value)
-  }
-
-  const renderedTimes = ({ selectedTime }: { selectedTime: number }) => {
-    return (
-      <ul className="gap-2 flex">
-        {times.map((time, index) => (
-          <li
-            key={`time-${index}`}
-            onClick={() => onChangeTime(time)}
-            className={`${
-              selectedTime === time
-                ? isTyping
-                  ? "text-transparent"
-                  : "text-yellow-600"
-                : ""
-            } cursor-pointer`}>
-            {time}
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  const { isTyping } = useGlobal()
 
   return (
     <div
@@ -44,8 +18,7 @@ const Options: FC = () => {
       }`}>
       <div className="flex flex-row gap-2 items-center">
         <BiTimer size={28} />
-
-        {renderedTimes({ selectedTime: time })}
+        <Times />
       </div>
       <div className="flex flex-row gap-2 items-center">
         <GrLanguage size={20} />

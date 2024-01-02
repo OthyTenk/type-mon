@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 
+import useGlobal from "@/store/useGlobal"
 import { APP_NAME } from "../site_settings"
 import Logo from "./Logo"
-import useGlobal from "@/store/useGlobal"
 
 const AppTitle = () => {
   const typing = useGlobal()
