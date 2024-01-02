@@ -1,6 +1,5 @@
 "use client"
 
-import useIsTyping from "@/app/hooks/useIsTyping"
 import useResultStatistic from "@/app/hooks/useResultStatistic"
 import useTypingResultModal from "@/app/hooks/useTypingResultModal"
 import axios from "axios"
@@ -8,13 +7,14 @@ import Button from "../Button"
 import Modal from "./Modal"
 import { useCallback } from "react"
 import { useRouter } from "next/navigation"
+import useGlobal from "@/store/useGlobal"
 
 const TypingResultModal = () => {
   const typingResultModal = useTypingResultModal()
   const router = useRouter()
 
-  const { currentUserEmail, mistakes, maxTime, WPM, CPM } = useResultStatistic()
-  const { currentLanguage } = useIsTyping()
+  const { currentUserEmail, mistakes, WPM, CPM } = useResultStatistic()
+  const { language, maxTime } = useGlobal()
 
   const onSaveResult = async () => {
     if (!currentUserEmail) {
@@ -28,7 +28,7 @@ const TypingResultModal = () => {
         mistakes,
         wpm: WPM,
         cpm: CPM,
-        language: currentLanguage,
+        language,
       })
       .then(() => {
         console.log("Saved")

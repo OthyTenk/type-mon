@@ -2,11 +2,11 @@
 
 import Link from "next/link"
 import { APP_NAME } from "../site_settings"
-import useIsTyping from "../hooks/useIsTyping"
+import useGlobal from "@/store/useGlobal"
 
 const Footer = () => {
   const year = new Date()
-  const { isTyping } = useIsTyping()
+  const { isTyping } = useGlobal()
 
   if (isTyping) {
     return null

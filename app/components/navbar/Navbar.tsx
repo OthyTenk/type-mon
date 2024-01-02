@@ -1,11 +1,10 @@
 "use client"
 
+import { SafeUser } from "@/app/types"
 import { FC } from "react"
 import Container from "../Container"
-import { SafeUser } from "@/app/types"
-import UserMenu from "./UserMenu"
 import Options from "../Options"
-import Logo from "../Logo"
+import UserMenu from "./UserMenu"
 
 interface NavbarProps {
   currentUser?: SafeUser | null
