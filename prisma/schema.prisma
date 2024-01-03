@@ -86,3 +86,11 @@ model MyHistory {
 
   @@map("myhistory")
 }
+
+model GamePlayer {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  playerId String @default("")
+  gameCode String @default("")
+
+  createdAt DateTime @default(now())
+}
