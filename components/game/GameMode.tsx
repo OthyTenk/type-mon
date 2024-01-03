@@ -52,7 +52,7 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
         userId: currentUserId,
         gameCode: gameCode,
       })
-      .catch(() => {
+      .then(() => {
         reset()
       })
   }
