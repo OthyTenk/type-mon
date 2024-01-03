@@ -1,8 +1,8 @@
+import Client from "@/components/Client"
 import getCurrentUser from "./actions/getCurrentUser"
 import getTypingTextByLang, {
   type ITypingTextByLangSlug,
 } from "./actions/getTypingData"
-import Client from "../components/Client"
 import HomeSection from "./components/HomeSection"
 import { DEFAULT_LANG } from "./site_settings"
 

@@ -15,7 +15,7 @@ const Options: FC = () => {
 
   return (
     <div
-      className={`w-full md:mx-auto mt-16 md:mt-24 max-w-5xl flex flex-col mb-5 md:flex-row items-center justify-between md:px-3 ${
+      className={`w-full md:mx-auto gap-2 mt-10 md:mt-24 max-w-5xl flex flex-col mb-5 md:flex-row items-center justify-between md:px-3 ${
         isTyping ? "text-transparent" : ""
       }`}>
       <div className="flex flex-row gap-2 items-center">
