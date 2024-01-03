@@ -46,9 +46,13 @@ const GameBoard = () => {
   }, [text])
 
   const sendPosition = async (position: number) => {
-    await axios.post("/api/position", {
-      position: position,
-    })
+    await axios
+      .post("/api/game/playing", {
+        position: position,
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   }
 
   const onTypePosition = (e: ChangeEvent<HTMLInputElement>) => {

@@ -48,7 +48,7 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
 
   const onLeaveGame = async () => {
     await axios
-      .post("/api/leave-game", {
+      .post("/api/game/leave", {
         userId: currentUserId,
         gameCode: gameCode,
       })

@@ -16,7 +16,7 @@ const CreateGame = () => {
   const onCreateGame = async () => {
     setCodeLoading(true)
     await axios
-      .post("/api/create-game", {
+      .post("/api/game/create", {
         userId: currentUserId,
       })
       .then((res) => {
@@ -29,7 +29,7 @@ const CreateGame = () => {
 
   const onJoinGame = async () => {
     await axios
-      .post("/api/join-game", {
+      .post("/api/game/join", {
         userId: currentUserId,
         inputCode,
       })
