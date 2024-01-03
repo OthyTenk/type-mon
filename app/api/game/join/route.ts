@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 import prisma from "../../../../libs/prismadb"
 import { pusherServer } from "../../../../libs/pusher"
+import { Player } from "@/types"
+
+const CounterTime = 5000
 
 export const POST = async (request: Request) => {
   const body = await request.json()
@@ -9,6 +12,13 @@ export const POST = async (request: Request) => {
   if (!inputCode || !userId) {
     return new NextResponse("Invalid User", { status: 401 })
   }
+
+  const creatorOrj = await prisma.gamePlayer.findFirstOrThrow({
+    where: {
+      gameCode: inputCode,
+    },
+  })
+  const { sentence } = await prisma.typeText.findFirstOrThrow()
 
   await prisma.gamePlayer.create({
     data: {
@@ -22,22 +32,28 @@ export const POST = async (request: Request) => {
     gameCode: inputCode,
   })
 
+  const creator: Player = {
+    id: creatorOrj.playerId,
+    name: creatorOrj.playerId,
+    charPosition: 0,
+  }
+
+  const guest: Player = {
+    id: userId,
+    name: userId,
+    charPosition: 0,
+  }
+
   //counter
-  const counterTime = 5000
-  const startsAt = new Date().getTime() + counterTime
-
-  await pusherServer.trigger("game", "game-starts-in", counterTime)
-
-  const interval = setInterval(async () => {
-    const remaining = startsAt - new Date().getTime()
-    if (remaining > 0) {
-      await pusherServer.trigger("game", "game-starts-in", remaining)
-    } else {
-      await pusherServer.trigger("game", "lets-go", 0)
-      clearInterval(interval)
-    }
-  }, 1000)
-  //   io.sockets.to(gameCode).emit("game-state", gameState[gameCode]);
+  const startsAt = new Date().getTime() + CounterTime
+  await pusherServer.trigger("game", "game-starts-in", {
+    startTime: startsAt,
+    sentence: sentence,
+    players: {
+      creator,
+      guest,
+    },
+  })
 
   return NextResponse.json("ok")
 }
