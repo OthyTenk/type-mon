@@ -61,8 +61,9 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
     <div className="max-w-4xl mx-auto p-3">
       <div className="flex">
         <p className="p-2">
-          User name: <span className="font-semibold">{currentUser}</span> (
-          {currentUserId})
+          You:{" "}
+          <span className="font-semibold text-yellow-600">{currentUser}</span>
+          {/* ({currentUserId}) */}
         </p>
         {gameCode.length > 0 && (
           <button onClick={onLeaveGame}>Logout game</button>

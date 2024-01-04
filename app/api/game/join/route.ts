@@ -18,7 +18,11 @@ export const POST = async (request: Request) => {
       gameCode: inputCode,
     },
   })
-  const { sentence } = await prisma.typeText.findFirstOrThrow()
+  const { sentence } = await prisma.typeText.findFirstOrThrow({
+    where: {
+      language: "en",
+    },
+  })
 
   await prisma.gamePlayer.create({
     data: {
@@ -48,11 +52,9 @@ export const POST = async (request: Request) => {
   const startsAt = new Date().getTime() + CounterTime
   await pusherServer.trigger("game", "game-starts-in", {
     startTime: startsAt,
-    sentence: sentence,
-    players: {
-      creator,
-      guest,
-    },
+    sentence,
+    creator,
+    guest,
   })
 
   return NextResponse.json("ok")

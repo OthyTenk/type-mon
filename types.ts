@@ -1,5 +1,8 @@
-export interface StartGame extends PlayerState {
+export interface StartGame {
   startTime: number
+  sentence: string
+  creator: Player
+  guest?: Player
 }
 
 export interface Player {
@@ -8,12 +11,4 @@ export interface Player {
   playAgain?: boolean
   disconnected?: boolean
   name: string
-}
-
-export interface PlayerState {
-  sentence: string
-  players: {
-    creator: Player
-    guest?: Player
-  }
 }
