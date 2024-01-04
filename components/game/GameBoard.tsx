@@ -1,19 +1,17 @@
 "use client"
 
-import { ChangeEvent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 import { pusherClient } from "@/libs/pusher"
 import useGame from "@/store/useGame"
 import { Player, StartGame } from "@/types"
-import axios from "axios"
 import Typing from "./Typing"
 
 const GameBoard = () => {
-  const { setGameCode, code: gameCode } = useGame()
+  const { setGameCode, code: gameCode, currentUserId } = useGame()
   const [startTime, setStartTime] = useState(0)
   const [showCounter, setShowCounter] = useState(0)
 
-  const { currentUserId } = useGame()
   const [player, setPlayer] = useState<Player>()
   const [sentence, setSentence] = useState("")
 
@@ -30,22 +28,9 @@ const GameBoard = () => {
       setSentence(sentence)
     })
 
-    channel.bind("lets-go", (counterTime: number) => {
-      //   console.log("lets-go");
-      // setCounterTime(counterTime)
-    })
-
-    // channel.bind("opponent-position", (opponent: { position: number }) => {
-    //   if (!opponent) return
-
-    //   setPosition(opponent.position)
-    // })
-
     return () => {
       pusherClient.unsubscribe("game")
       pusherClient.unbind("game-starts-in")
-      pusherClient.unbind("lets-go")
-      pusherClient.unbind("opponent-position")
     }
   }, [
     gameCode,
@@ -79,15 +64,14 @@ const GameBoard = () => {
 
   return (
     <div>
-      {showCounter > 0 && <span>{showCounter}</span>}
       <div className="space-y-3">
-        <div className="font-semibold">
+        <div className="font-semibold px-2">
           Player: <span className=" text-orange-500">{player?.name}</span>
         </div>
 
-        <div>
-          <Typing currentText={sentence} currentUserId={currentUserId} />
-        </div>
+        {showCounter > 0 ? <span>{showCounter}</span> : <span>GO!</span>}
+
+        <Typing currentText={sentence} currentUserId={currentUserId} />
       </div>
     </div>
   )
