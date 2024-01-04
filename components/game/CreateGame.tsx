@@ -1,26 +1,29 @@
 "use client"
 
+import useGame from "@/store/useGame"
 import axios from "axios"
 import { useState } from "react"
 import WaitingBoard from "./WaitingBoard"
-import useGame from "@/store/useGame"
 
 const CreateGame = () => {
   const isSocketConnected = true
   const [codeLoading, setCodeLoading] = useState(false)
   const [codeError, setCodeError] = useState(false)
-  const [gameCreateCode, setGameCreateCode] = useState("")
+  // const [gameCreateCode, setGameCreateCode] = useState("")
   const [inputCode, setInputCode] = useState("")
-  const { currentUser, currentUserId } = useGame()
+  const { currentUser, currentUserId, creatorCode, setGameCreatorCode } =
+    useGame()
 
   const onCreateGame = async () => {
     setCodeLoading(true)
+
     await axios
       .post("/api/game/create", {
         userId: currentUserId,
       })
       .then((res) => {
-        setGameCreateCode(res.data.gameCode)
+        // setGameCreateCode(res.data.gameCode)
+        setGameCreatorCode(res.data.gameCode)
       })
       .finally(() => {
         setCodeLoading(false)
@@ -34,7 +37,7 @@ const CreateGame = () => {
         inputCode,
       })
       .then((res) => {
-        setGameCreateCode("")
+        setGameCreatorCode("")
       })
       .finally(() => {
         setCodeLoading(false)
@@ -43,8 +46,8 @@ const CreateGame = () => {
 
   return (
     <div>
-      {gameCreateCode.length > 0 ? (
-        <WaitingBoard gameCode={gameCreateCode} userName={currentUser || ""} />
+      {creatorCode.length > 0 ? (
+        <WaitingBoard gameCode={creatorCode} userName={currentUser || ""} />
       ) : (
         <div
           className={`flex flex-col w-full md:flex-row items-center justify-between gap-2 ${

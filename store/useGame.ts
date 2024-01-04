@@ -5,12 +5,14 @@ interface IGameStore {
   currentUser: string | null
   currentUserId: string
   code: string
+  creatorCode: string
 }
 
 interface IActions {
   setCurrentUser: (name: string) => void
   setUserInfo: (name: string, id: string) => void
   setGameCode: (code: string) => void
+  setGameCreatorCode: (code: string) => void
   reset: () => void
 }
 
@@ -19,6 +21,7 @@ const INITIAL_STATE: IGameStore = {
   currentUser: "",
   currentUserId: "",
   code: "",
+  creatorCode: "",
 }
 
 const useGame = create(
@@ -27,14 +30,17 @@ const useGame = create(
       currentUser: INITIAL_STATE.currentUser,
       currentUserId: INITIAL_STATE.currentUserId,
       code: INITIAL_STATE.code,
+      creatorCode: INITIAL_STATE.creatorCode,
       setCurrentUser: (name) => set({ currentUser: name }),
       setUserInfo: (name, id) => set({ currentUser: name, currentUserId: id }),
       setGameCode: (code) => set({ code: code }),
+      setGameCreatorCode: (code) => set({ creatorCode: code }),
       reset: () =>
         set({
           currentUser: INITIAL_STATE.currentUser,
           currentUserId: INITIAL_STATE.currentUserId,
           code: INITIAL_STATE.code,
+          creatorCode: INITIAL_STATE.creatorCode,
         }),
     }),
     {
