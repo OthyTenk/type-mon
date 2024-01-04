@@ -18,6 +18,7 @@ export const POST = async (request: Request) => {
       gameCode: inputCode,
     },
   })
+
   const { sentence } = await prisma.typeText.findFirstOrThrow({
     where: {
       language: "en",

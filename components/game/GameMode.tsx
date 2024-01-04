@@ -48,8 +48,6 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
   }, [gameCode, setGameCode, reset])
 
   const onLeaveGame = async () => {
-    console.log({ gameCode })
-
     await axios
       .post("/api/game/leave", {
         userId: currentUserId,
@@ -66,12 +64,12 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
         <p className="p-2">
           You:{" "}
           <span className="font-semibold text-yellow-600">{currentUser}</span>
-          {/* ({currentUserId}) */}
         </p>
+
         {(gameCode.length > 0 || creatorCode.length > 0) && (
           <button
             onClick={onLeaveGame}
-            className="rounded-3xl bg-neutral-600 px-4">
+            className="rounded-lg bg-neutral-600 px-4">
             Logout game
           </button>
         )}

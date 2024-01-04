@@ -17,11 +17,13 @@ const WaitingBoard: FC<WaitingBoardProps> = ({ gameCode, userName }) => {
       </div>
 
       <div className="flex flex-col gap-5 md:flex-row items-center">
-        <div className="bg-yellow-600 w-48 h-48 rounded-3xl flex flex-col items-center justify-center">
+        <div className="bg-yellow-600/60 w-48 h-48 rounded-3xl flex flex-col items-center justify-center">
           <span className="text-2xl font-semibold">{userName}</span>
           <span>You</span>
         </div>
+
         <span className="">vs</span>
+
         <div className="bg-neutral-600 w-48 h-48 gap-3 rounded-3xl flex flex-col items-center justify-center">
           <span className="text-white font-bold">Opponent</span>
           <div className="text-white">Waiting...</div>
