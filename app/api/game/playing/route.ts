@@ -4,17 +4,16 @@ import { pusherServer } from "../../../../libs/pusher"
 export const POST = async (request: Request) => {
   const body = await request.json()
 
-  const { position } = body
+  const { position, currentUserId } = body
 
   if (position === undefined || position === null) {
-    console.log("Bad request")
-    console.log("position", position)
     return new NextResponse("Bad request", { status: 500 })
   }
 
   await pusherServer.trigger("game", "opponent-position", {
     // gameCode: `${JSON.stringify(inputCode)}\n\n`,
     position: position,
+    userId: currentUserId,
   })
 
   return NextResponse.json("ok")
