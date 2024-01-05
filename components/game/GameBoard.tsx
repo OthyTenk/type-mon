@@ -4,13 +4,16 @@ import { useEffect, useState } from "react"
 
 import { pusherClient } from "@/libs/pusher"
 import useGame from "@/store/useGame"
+import useGlobal from "@/store/useGlobal"
 import { Player, StartGame } from "@/types"
 import Typing from "./Typing"
 
 const GameBoard = () => {
   const { setGameCode, code: gameCode, currentUserId } = useGame()
+  const { startType, isTyping } = useGlobal()
+
   const [startTime, setStartTime] = useState(0)
-  const [showCounter, setShowCounter] = useState(0)
+  const [showCounter, setShowCounter] = useState<number | undefined>(undefined)
 
   const [player, setPlayer] = useState<Player>()
   const [sentence, setSentence] = useState("")
@@ -44,11 +47,6 @@ const GameBoard = () => {
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined
 
-    if (startTime <= 0) {
-      clearInterval(interval)
-      return
-    }
-
     interval = setInterval(() => {
       const remaining = startTime - new Date().getTime()
       if (remaining > 0) {
@@ -56,11 +54,24 @@ const GameBoard = () => {
       } else {
         setShowCounter(0)
         setStartTime(0)
+        clearInterval(interval)
       }
     }, 1000)
 
     return () => clearInterval(interval)
   }, [startTime])
+
+  useEffect(() => {
+    showCounter === 0 && startType()
+  }, [showCounter, startType])
+
+  const renderedCountDown = () => {
+    return showCounter && showCounter > 0 ? (
+      <span>{showCounter}</span>
+    ) : (
+      <span>{showCounter === 0 ? "GO!" : "A wait!"}</span>
+    )
+  }
 
   return (
     <div>
@@ -69,7 +80,7 @@ const GameBoard = () => {
           Player: <span className=" text-orange-500">{player?.name}</span>
         </div>
 
-        {showCounter > 0 ? <span>{showCounter}</span> : <span>GO!</span>}
+        {renderedCountDown()}
 
         <Typing currentText={sentence} currentUserId={currentUserId} />
       </div>
