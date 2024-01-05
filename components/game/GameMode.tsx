@@ -6,6 +6,7 @@ import axios from "axios"
 import { FC, useEffect } from "react"
 import CreateGame from "./CreateGame"
 import GameBoard from "./GameBoard"
+import useGlobal from "@/store/useGlobal"
 
 interface GameModeProps {
   userName: string
@@ -21,7 +22,7 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
     creatorCode,
     reset,
   } = useGame()
-
+  const { stopType } = useGlobal()
   useEffect(() => {
     if (currentUser && currentUser?.length > 0 && currentUserId.length > 0)
       return
@@ -41,11 +42,12 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
     channel.bind("opponent-disconnected", (data: { gameCode: string }) => {
       if (gameCode === data.gameCode) {
         reset()
+        stopType()
       }
     })
 
     return () => pusherClient.unsubscribe("game")
-  }, [gameCode, setGameCode, reset])
+  }, [gameCode, setGameCode, reset, stopType])
 
   const onLeaveGame = async () => {
     await axios
@@ -55,6 +57,7 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
       })
       .then(() => {
         reset()
+        stopType()
       })
   }
 

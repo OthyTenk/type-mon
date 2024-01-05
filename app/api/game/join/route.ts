@@ -1,9 +1,14 @@
+import { Player } from "@/types"
 import { NextResponse } from "next/server"
 import prisma from "../../../../libs/prismadb"
 import { pusherServer } from "../../../../libs/pusher"
-import { Player } from "@/types"
 
 const CounterTime = 5000
+
+//sentence length
+const Beginner = 60
+const Medium = 120
+const Master = 180
 
 export const POST = async (request: Request) => {
   const body = await request.json()
@@ -53,7 +58,7 @@ export const POST = async (request: Request) => {
   const startsAt = new Date().getTime() + CounterTime
   await pusherServer.trigger("game", "game-starts-in", {
     startTime: startsAt,
-    sentence,
+    sentence: sentence.substring(0, Beginner),
     creator,
     guest,
   })

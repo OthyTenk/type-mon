@@ -12,6 +12,7 @@ import {
 
 import useGlobal from "@/store/useGlobal"
 
+import TimeTick from "@/app/components/TimeTick"
 import { pusherClient } from "@/libs/pusher"
 import axios from "axios"
 import OpponentCursor from "./OpponentCursor"
@@ -22,19 +23,18 @@ interface ITypingProps {
 }
 
 const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
-  const { stopType, startType, time } = useGlobal()
+  const { stopType, isTyping } = useGlobal()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const activeLetterRef = useRef<HTMLSpanElement>()
   const [position, setPosition] = useState(0)
+  const [tickTime, setTickTime] = useState(0)
 
   const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
 
   const [typingText, setTypingText] = useState<string | ReactElement[]>("")
   const [inpFieldValue, setInpFieldValue] = useState("")
-  const [timeLeft, setTimeLeft] = useState(time)
   const [charIndex, setCharIndex] = useState(0)
-  const [isTyping, setIsTyping] = useState(false)
 
   const loadParagraph = useCallback(() => {
     const content = Array.from(currentText).map((letter, index) => (
@@ -48,17 +48,18 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
         {letter}
       </span>
     ))
-    setTypingText(content)
 
+    setTypingText(content)
     setInpFieldValue("")
     setCharIndex(0)
-    setIsTyping(false)
-    setTimeLeft(time)
-    stopType()
-  }, [stopType, time, currentText, position])
+  }, [currentText, position])
 
   useEffect(() => {
-    if (!currentText) return
+    if (!currentText || inpFieldValue.length > currentText.length) {
+      stopType()
+      // stopType()
+      return
+    }
 
     const content = Array.from(currentText).map((letter, index) => {
       let resultColor = ""
@@ -87,8 +88,13 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
       )
     })
 
+    if (inpFieldValue.length >= currentText.length) {
+      stopType()
+      inputRef.current?.blur()
+    }
+
     setTypingText(content)
-  }, [inpFieldValue, currentText, position])
+  }, [inpFieldValue, currentText, position, stopType])
 
   const setInputFocus = () => {
     return inputRef.current?.focus()
@@ -102,45 +108,37 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     return () => document.removeEventListener("keydown", setInputFocus)
   }, [loadParagraph])
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined = undefined
+  // useEffect(() => {
+  //   let cpm = (charIndex - stat.mistakes) * (60 / (time - timeLeft))
+  //   cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
+  //   stat.CPM = Math.round(cpm)
 
-    if (timeLeft <= 0 || !isTyping) {
-      clearInterval(interval)
-      setIsTyping(false)
-      stopType()
-      return
-    }
-
-    interval = setInterval(() => setTimeLeft(timeLeft - 1), 1000)
-
-    return () => clearInterval(interval)
-  }, [isTyping, timeLeft, stopType])
+  //   let wpm = Math.round(
+  //     ((charIndex - stat.mistakes) / 5 / (time - timeLeft)) * 60
+  //   )
+  //   wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
+  //   stat.WPM = wpm
+  // }, [timeLeft, charIndex, stat, time])
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
-    if (inpFieldValue.length > typingText.length || timeLeft < 1) {
-      setIsTyping(false)
-      inputRef.current?.blur()
-
-      stopType()
+    if (tickSecond() === 0) {
       return
     }
+    setInpFieldValue(e.target.value)
 
-    if (!isTyping) {
-      setIsTyping(true)
-      startType()
+    if (inpFieldValue.length > typingText.length) {
+      return
     }
 
     const currentTypingPosition = inpFieldValue.length
 
     activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" })
     setCharIndex(currentTypingPosition)
-    setInpFieldValue(e.target.value)
 
-    sendPosition(currentTypingPosition)
+    onSendActiveCharPosition(currentTypingPosition)
   }
 
-  const sendPosition = async (position: number) => {
+  const onSendActiveCharPosition = async (position: number) => {
     await axios
       .post("/api/game/playing", {
         position: position,
@@ -169,6 +167,24 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
   }, [setPosition, currentUserId])
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined = undefined
+
+    if (isTyping) {
+      interval = setInterval(() => {
+        setTickTime((priv) => priv + 1000)
+      }, 1000)
+    } else {
+      clearInterval(interval)
+    }
+
+    return () => clearInterval(interval)
+  }, [isTyping])
+
+  const tickSecond = () => {
+    return Math.floor((tickTime / 1000) % 60)
+  }
+
   return (
     <>
       <div className="p-0 my-10 min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
@@ -178,6 +194,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           }  md:shadow-lg`}>
           <div className="flex flex-1 mt-28 md:mt-0" />
 
+          <TimeTick timeLeft={tickSecond()} />
           <div className="p-2">
             <input
               ref={inputRef}
