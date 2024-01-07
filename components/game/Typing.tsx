@@ -13,7 +13,9 @@ import {
 import useGlobal from "@/store/useGlobal"
 
 import TimeTick from "@/app/components/TimeTick"
-import useResultStatistic from "@/app/hooks/useResultStatistic"
+import useResultStatistic, {
+  IResultStatisticStore,
+} from "@/app/hooks/useResultStatistic"
 import useTypingResultModal from "@/app/hooks/useTypingResultModal"
 import { countCorrectCharacters } from "@/app/utils"
 import { pusherClient } from "@/libs/pusher"
@@ -33,6 +35,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const activeLetterRef = useRef<HTMLSpanElement>()
   const [position, setPosition] = useState(0)
   const [tickTime, setTickTime] = useState(0)
+  const [gameFinish, setGameFinish] = useState(false)
   const stat = useResultStatistic()
   const typingResultModal = useTypingResultModal()
   const { code: gameCode, reset } = useGame()
@@ -125,12 +128,15 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   }, [tickTime, charIndex, stat])
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
-    if (tickTime === 0) {
+    if (tickTime === 0 || gameFinish) {
       return
     }
     setInpFieldValue(e.target.value)
 
-    if (inpFieldValue.length > typingText.length) {
+    if (inpFieldValue.length > typingText.length - 1) {
+      stat.currentUserEmail = currentUserId
+      setGameFinish(true)
+      onFinishedGame()
       typingResultModal.onOpen()
       return
     }
@@ -146,8 +152,27 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const onSendActiveCharPosition = async (position: number) => {
     await axios
       .post("/api/game/playing", {
-        position: position,
+        position: position + 1,
         currentUserId,
+        gameCode,
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  }
+
+  const onFinishedGame = async () => {
+    const result: IResultStatisticStore = {
+      WPM: stat.WPM,
+      CPM: stat.CPM,
+      currentUserEmail: stat.currentUserEmail,
+      time: tickTime,
+      mistakes: stat.mistakes,
+    }
+
+    await axios
+      .post("/api/game/finish", {
+        result,
         gameCode,
       })
       .catch((err) => {
@@ -159,21 +184,34 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     if (!gameCode) return
 
     const channel = pusherClient.subscribe(gameCode)
-    channel.bind(
-      "opponent-position",
-      (opponent: { position: number; userId: string }) => {
-        if (!opponent || opponent.userId === currentUserId) return
 
-        setPosition(opponent.position)
-      }
-    )
-
-    channel.bind("opponent-disconnected", (data: { gameCode: string }) => {
+    const opponentDisconnected = (data: { gameCode: string }) => {
       if (gameCode === data.gameCode) {
         reset()
         stopType()
+
+        if (typingResultModal.isOpen) {
+          typingResultModal.onClose()
+        }
       }
-    })
+    }
+
+    const opponentPosition = (data: { position: number; userId: string }) => {
+      if (!data || data.userId === currentUserId) return
+
+      setPosition(data.position)
+    }
+
+    const gameFinish = (data: IResultStatisticStore) => {
+      console.log(data)
+      stopType()
+      setGameFinish(true)
+    }
+
+    channel.bind("opponent-position", opponentPosition)
+    channel.bind("opponent-disconnected", opponentDisconnected)
+
+    channel.bind("game-finish", gameFinish)
 
     return () => {
       if (gameCode) {
@@ -181,14 +219,13 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
         pusherClient.unbind("opponent-position")
       }
     }
-  }, [setPosition, currentUserId, gameCode, reset, stopType])
+  }, [setPosition, currentUserId, gameCode, reset, stopType, typingResultModal])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined
 
     if (isTyping) {
       interval = setInterval(() => {
-        // setTickTime((priv) => priv + 1000)
         setTickTime((priv) => priv + 1)
       }, 1000)
     } else {
@@ -197,10 +234,6 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
 
     return () => clearInterval(interval)
   }, [isTyping])
-
-  // const tickSecond = () => {
-  //   return Math.floor((tickTime / 1000) % 60)
-  // }
 
   return (
     <>
@@ -211,8 +244,6 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           }  md:shadow-lg`}>
           <div className="flex flex-1 mt-28 md:mt-0" />
 
-          {/* <TimeTick timeLeft={tickSecond()} />
-           */}
           <TimeTick timeLeft={tickTime} />
           <div className="p-2">
             <input

@@ -69,7 +69,6 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
         <p className="p-2">
           You:{" "}
           <span className="font-semibold text-yellow-600">{currentUser}</span>
-          <span className="font-semibold text-yellow-600">{gameCode}</span>
         </p>
 
         {(gameCode.length > 0 || creatorCode.length > 0) && (
