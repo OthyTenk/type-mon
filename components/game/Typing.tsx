@@ -21,6 +21,7 @@ import useGameResult from "@/store/useGameResult"
 import useGameResultModal from "@/store/useGameResultModal"
 import axios from "axios"
 import OpponentCursor from "./OpponentCursor"
+import Cursor from "@/app/components/Cursor"
 
 interface ITypingProps {
   currentText: string
@@ -32,6 +33,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
 
   const inputRef = useRef<HTMLInputElement>(null)
   const activeLetterRef = useRef<HTMLSpanElement>()
+  const opponentLetterRef = useRef<HTMLSpanElement>()
+
   const [position, setPosition] = useState(0)
   const [tickTime, setTickTime] = useState(0)
   const [gameFinish, setGameFinish] = useState(false)
@@ -57,9 +60,11 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
         key={index}
         ref={(element) => {
           index === 0 && (activeLetterRef.current = element || undefined)
+          position === index &&
+            (opponentLetterRef.current = element || undefined)
         }}
         className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
-        {position === index && <OpponentCursor />}
+        {/* {position === index && <OpponentCursor />} */}
         {letter}
       </span>
     ))
@@ -92,14 +97,16 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           ref={(element) => {
             inpFieldValue.length === index &&
               (activeLetterRef.current = element || undefined)
+            position === index &&
+              (opponentLetterRef.current = element || undefined)
           }}
           className={`${
             inpFieldValue.length === index ? CurrentPositionStyle : ""
           } ${resultColor}`}>
-          {position === index && <OpponentCursor />}
+          {/* {position === index && <OpponentCursor />}
           {position >= currentText.length - 1 && position === index && (
             <OpponentCursor />
-          )}
+          )} */}
           {letter}
         </span>
       )
@@ -293,6 +300,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
               onChange={onTyping}
             />
             <div className="relative pb-8 text-2xl text-neutral-300 font-mono">
+              <Cursor activeLetterRef={opponentLetterRef} />
+
               <div className="whitespace-break-spaces leading-8 h-24 overflow-hidden">
                 {typingText}
               </div>
