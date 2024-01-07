@@ -13,11 +13,13 @@ import {
 import useGlobal from "@/store/useGlobal"
 
 import TimeTick from "@/app/components/TimeTick"
-import { pusherClient } from "@/libs/pusher"
-import axios from "axios"
-import OpponentCursor from "./OpponentCursor"
 import useResultStatistic from "@/app/hooks/useResultStatistic"
 import useTypingResultModal from "@/app/hooks/useTypingResultModal"
+import { countCorrectCharacters } from "@/app/utils"
+import { pusherClient } from "@/libs/pusher"
+import useGame from "@/store/useGame"
+import axios from "axios"
+import OpponentCursor from "./OpponentCursor"
 
 interface ITypingProps {
   currentText: string
@@ -33,6 +35,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const [tickTime, setTickTime] = useState(0)
   const stat = useResultStatistic()
   const typingResultModal = useTypingResultModal()
+  const { code: gameCode, reset } = useGame()
 
   const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
 
@@ -61,7 +64,6 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   useEffect(() => {
     if (!currentText || inpFieldValue.length > currentText.length) {
       stopType()
-      // stopType()
       return
     }
 
@@ -98,7 +100,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
 
     setTypingText(content)
-  }, [inpFieldValue, currentText, position, stopType, typingResultModal])
+  }, [inpFieldValue, currentText, position, stopType])
 
   const setInputFocus = () => {
     return inputRef.current?.focus()
@@ -113,23 +115,16 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   }, [loadParagraph])
 
   useEffect(() => {
-    // let cpm = (charIndex - stat.mistakes) * (60 / (time - timeLeft))
     let cpm = (charIndex - stat.mistakes) * (60 / tickTime)
     cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
     stat.CPM = Math.round(cpm)
 
-    // let wpm = Math.round(
-    //   ((charIndex - stat.mistakes) / 5 / (time - timeLeft)) * 60
-    // )
     let wpm = Math.round(((charIndex - stat.mistakes) / 5 / tickTime) * 60)
     wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
     stat.WPM = wpm
   }, [tickTime, charIndex, stat])
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
-    // if (tickSecond() === 0) {
-    //   return
-    // }
     if (tickTime === 0) {
       return
     }
@@ -144,8 +139,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
 
     activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" })
     setCharIndex(currentTypingPosition)
-
     onSendActiveCharPosition(currentTypingPosition)
+    stat.mistakes = countCorrectCharacters(currentText, inpFieldValue)
   }
 
   const onSendActiveCharPosition = async (position: number) => {
@@ -153,6 +148,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
       .post("/api/game/playing", {
         position: position,
         currentUserId,
+        gameCode,
       })
       .catch((err) => {
         console.error(err)
@@ -160,8 +156,9 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   }
 
   useEffect(() => {
-    const channel = pusherClient.subscribe("game")
+    if (!gameCode) return
 
+    const channel = pusherClient.subscribe(gameCode)
     channel.bind(
       "opponent-position",
       (opponent: { position: number; userId: string }) => {
@@ -171,11 +168,20 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
       }
     )
 
+    channel.bind("opponent-disconnected", (data: { gameCode: string }) => {
+      if (gameCode === data.gameCode) {
+        reset()
+        stopType()
+      }
+    })
+
     return () => {
-      pusherClient.unsubscribe("game")
-      pusherClient.unbind("opponent-position")
+      if (gameCode) {
+        pusherClient.unsubscribe(gameCode)
+        pusherClient.unbind("opponent-position")
+      }
     }
-  }, [setPosition, currentUserId])
+  }, [setPosition, currentUserId, gameCode, reset, stopType])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined

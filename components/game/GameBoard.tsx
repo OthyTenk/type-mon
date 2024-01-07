@@ -9,7 +9,7 @@ import { Player, StartGame } from "@/types"
 import Typing from "./Typing"
 
 const GameBoard = () => {
-  const { setGameCode, code: gameCode, currentUserId } = useGame()
+  const { code: gameCode, currentUserId } = useGame()
   const { startType } = useGlobal()
 
   const [startTime, setStartTime] = useState(0)
@@ -19,7 +19,9 @@ const GameBoard = () => {
   const [sentence, setSentence] = useState("")
 
   useEffect(() => {
-    const channel = pusherClient.subscribe("game")
+    if (!gameCode) return
+
+    const channel = pusherClient.subscribe(gameCode)
     channel.bind("game-starts-in", (startGame: StartGame) => {
       if (!startGame) return
 
@@ -32,17 +34,12 @@ const GameBoard = () => {
     })
 
     return () => {
-      pusherClient.unsubscribe("game")
-      pusherClient.unbind("game-starts-in")
+      if (gameCode) {
+        pusherClient.unsubscribe(gameCode)
+        pusherClient.unbind("game-starts-in")
+      }
     }
-  }, [
-    gameCode,
-    setGameCode,
-    setSentence,
-    setPlayer,
-    setStartTime,
-    currentUserId,
-  ])
+  }, [gameCode, setSentence, setPlayer, setStartTime, currentUserId])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined
