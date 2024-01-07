@@ -10,12 +10,7 @@ export const POST = async (request: Request) => {
     return new NextResponse("Bad request", { status: 500 })
   }
 
-  console.log(gameCode)
-  console.log(result)
-
-  await pusherServer.trigger(gameCode, "game-finish", {
-    result: result,
-  })
+  await pusherServer.trigger(gameCode, "game-finish", result)
 
   return NextResponse.json("ok")
 }

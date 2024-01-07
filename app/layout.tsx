@@ -13,6 +13,7 @@ import {
   SITE_TITLE,
   SITE_URL,
 } from "./site_settings"
+import GameResultModal from "@/components/modal/GameResultModal"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -72,6 +73,7 @@ export default function RootLayout({
         <ToasterProvider />
         <TypingResultModal />
         <RegisterModal />
+        <GameResultModal />
         <main>{children}</main>
         <Footer />
         <Analytics />

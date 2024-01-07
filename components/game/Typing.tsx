@@ -13,13 +13,12 @@ import {
 import useGlobal from "@/store/useGlobal"
 
 import TimeTick from "@/app/components/TimeTick"
-import useResultStatistic, {
-  IResultStatisticStore,
-} from "@/app/hooks/useResultStatistic"
-import useTypingResultModal from "@/app/hooks/useTypingResultModal"
+import { IResultStatisticStore } from "@/app/hooks/useResultStatistic"
 import { countCorrectCharacters } from "@/app/utils"
 import { pusherClient } from "@/libs/pusher"
 import useGame from "@/store/useGame"
+import useGameResult from "@/store/useGameResult"
+import useGameResultModal from "@/store/useGameResultModal"
 import axios from "axios"
 import OpponentCursor from "./OpponentCursor"
 
@@ -36,8 +35,14 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const [position, setPosition] = useState(0)
   const [tickTime, setTickTime] = useState(0)
   const [gameFinish, setGameFinish] = useState(false)
-  const stat = useResultStatistic()
-  const typingResultModal = useTypingResultModal()
+  const {
+    creator,
+    guest,
+    setGuest,
+    setCreator,
+    reset: resetGameResult,
+  } = useGameResult()
+  const gameResultModal = useGameResultModal()
   const { code: gameCode, reset } = useGame()
 
   const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
@@ -92,6 +97,9 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
             inpFieldValue.length === index ? CurrentPositionStyle : ""
           } ${resultColor}`}>
           {position === index && <OpponentCursor />}
+          {position >= currentText.length - 1 && position === index && (
+            <OpponentCursor />
+          )}
           {letter}
         </span>
       )
@@ -118,14 +126,14 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   }, [loadParagraph])
 
   useEffect(() => {
-    let cpm = (charIndex - stat.mistakes) * (60 / tickTime)
+    let cpm = (charIndex - creator.mistakes) * (60 / tickTime)
     cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
-    stat.CPM = Math.round(cpm)
+    creator.CPM = Math.round(cpm)
 
-    let wpm = Math.round(((charIndex - stat.mistakes) / 5 / tickTime) * 60)
+    let wpm = Math.round(((charIndex - creator.mistakes) / 5 / tickTime) * 60)
     wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
-    stat.WPM = wpm
-  }, [tickTime, charIndex, stat])
+    creator.WPM = wpm
+  }, [tickTime, charIndex, creator])
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
     if (tickTime === 0 || gameFinish) {
@@ -134,10 +142,9 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     setInpFieldValue(e.target.value)
 
     if (inpFieldValue.length > typingText.length - 1) {
-      stat.currentUserEmail = currentUserId
       setGameFinish(true)
       onFinishedGame()
-      typingResultModal.onOpen()
+      gameResultModal.onOpen()
       return
     }
 
@@ -146,7 +153,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" })
     setCharIndex(currentTypingPosition)
     onSendActiveCharPosition(currentTypingPosition)
-    stat.mistakes = countCorrectCharacters(currentText, inpFieldValue)
+    creator.mistakes = countCorrectCharacters(currentText, inpFieldValue)
   }
 
   const onSendActiveCharPosition = async (position: number) => {
@@ -161,24 +168,23 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
       })
   }
 
-  const onFinishedGame = async () => {
-    const result: IResultStatisticStore = {
-      WPM: stat.WPM,
-      CPM: stat.CPM,
-      currentUserEmail: stat.currentUserEmail,
+  const onFinishedGame = useCallback(async () => {
+    const newCreator = {
+      ...creator,
+      currentUserEmail: currentUserId,
       time: tickTime,
-      mistakes: stat.mistakes,
     }
+    setCreator(newCreator)
 
     await axios
       .post("/api/game/finish", {
-        result,
+        result: newCreator,
         gameCode,
       })
       .catch((err) => {
         console.error(err)
       })
-  }
+  }, [gameCode, creator, setCreator, currentUserId, tickTime])
 
   useEffect(() => {
     if (!gameCode) return
@@ -189,9 +195,10 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
       if (gameCode === data.gameCode) {
         reset()
         stopType()
+        resetGameResult()
 
-        if (typingResultModal.isOpen) {
-          typingResultModal.onClose()
+        if (gameResultModal.isOpen) {
+          gameResultModal.onClose()
         }
       }
     }
@@ -203,23 +210,52 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
 
     const gameFinish = (data: IResultStatisticStore) => {
-      console.log(data)
+      if (data.currentUserEmail === currentUserId) {
+        return
+      }
+
       stopType()
       setGameFinish(true)
+
+      if (!guest.currentUserEmail) {
+        setGuest(data)
+      }
+
+      if (!creator.currentUserEmail && !gameResultModal.isOpen) {
+        onFinishedGame()
+      }
+
+      if (!gameResultModal.isOpen) {
+        gameResultModal.onOpen()
+      }
     }
 
     channel.bind("opponent-position", opponentPosition)
     channel.bind("opponent-disconnected", opponentDisconnected)
-
     channel.bind("game-finish", gameFinish)
 
     return () => {
       if (gameCode) {
         pusherClient.unsubscribe(gameCode)
         pusherClient.unbind("opponent-position")
+        pusherClient.unbind("game-finish")
       }
     }
-  }, [setPosition, currentUserId, gameCode, reset, stopType, typingResultModal])
+  }, [
+    setCreator,
+    setPosition,
+    tickTime,
+    currentUserId,
+    gameCode,
+    reset,
+    stopType,
+    gameResultModal,
+    creator,
+    guest,
+    setGuest,
+    onFinishedGame,
+    resetGameResult,
+  ])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined

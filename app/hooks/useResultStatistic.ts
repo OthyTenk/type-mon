@@ -8,7 +8,7 @@ export interface IResultStatisticStore {
   time?: number
 }
 
-interface IAction {
+export interface IAction {
   setValues: {
     cpm?: number
     wpm?: number
@@ -19,7 +19,7 @@ interface IAction {
   reset: () => void
 }
 
-const INITIAL_STATE: IResultStatisticStore = {
+export const INITIAL_STATE: IResultStatisticStore = {
   CPM: 0,
   WPM: 0,
   mistakes: 0,
