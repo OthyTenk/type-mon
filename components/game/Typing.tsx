@@ -12,6 +12,7 @@ import {
 
 import useGlobal from "@/store/useGlobal"
 
+import Cursor from "@/app/components/Cursor"
 import TimeTick from "@/app/components/TimeTick"
 import { IResultStatisticStore } from "@/app/hooks/useResultStatistic"
 import { countCorrectCharacters } from "@/app/utils"
@@ -20,8 +21,6 @@ import useGame from "@/store/useGame"
 import useGameResult from "@/store/useGameResult"
 import useGameResultModal from "@/store/useGameResultModal"
 import axios from "axios"
-import OpponentCursor from "./OpponentCursor"
-import Cursor from "@/app/components/Cursor"
 
 interface ITypingProps {
   currentText: string
@@ -48,8 +47,6 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const gameResultModal = useGameResultModal()
   const { code: gameCode, reset } = useGame()
 
-  const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
-
   const [typingText, setTypingText] = useState<string | ReactElement[]>("")
   const [inpFieldValue, setInpFieldValue] = useState("")
   const [charIndex, setCharIndex] = useState(0)
@@ -62,10 +59,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           index === 0 && (activeLetterRef.current = element || undefined)
           position === index &&
             (opponentLetterRef.current = element || undefined)
-        }}
-        // className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}
-      >
-        {/* {position === index && <OpponentCursor />} */}
+        }}>
         {letter}
       </span>
     ))
@@ -98,17 +92,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           ref={(element) => {
             inpFieldValue.length === index &&
               (activeLetterRef.current = element || undefined)
-            position === index &&
-              (opponentLetterRef.current = element || undefined)
           }}
-          // className={`
-          //  ${inpFieldValue.length === index ? CurrentPositionStyle : ""}
-          // ${resultColor}`}
           className={`${resultColor}`}>
-          {/* {position === index && <OpponentCursor />}
-          {position >= currentText.length - 1 && position === index && (
-            <OpponentCursor />
-          )} */}
           {letter}
         </span>
       )
@@ -120,7 +105,22 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
 
     setTypingText(content)
-  }, [inpFieldValue, currentText, position, stopType])
+  }, [inpFieldValue, currentText, stopType])
+
+  useEffect(() => {
+    Array.from(currentText).map((letter, index) => {
+      return (
+        <span
+          key={index}
+          ref={(element) => {
+            position === index &&
+              (opponentLetterRef.current = element || undefined)
+          }}>
+          {letter}
+        </span>
+      )
+    })
+  }, [position, currentText])
 
   const setInputFocus = () => {
     return inputRef.current?.focus()
