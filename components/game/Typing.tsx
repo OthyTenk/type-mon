@@ -63,7 +63,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           position === index &&
             (opponentLetterRef.current = element || undefined)
         }}
-        className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
+        // className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}
+      >
         {/* {position === index && <OpponentCursor />} */}
         {letter}
       </span>
@@ -100,9 +101,10 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
             position === index &&
               (opponentLetterRef.current = element || undefined)
           }}
-          className={`${
-            inpFieldValue.length === index ? CurrentPositionStyle : ""
-          } ${resultColor}`}>
+          // className={`
+          //  ${inpFieldValue.length === index ? CurrentPositionStyle : ""}
+          // ${resultColor}`}
+          className={`${resultColor}`}>
           {/* {position === index && <OpponentCursor />}
           {position >= currentText.length - 1 && position === index && (
             <OpponentCursor />
@@ -300,7 +302,11 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
               onChange={onTyping}
             />
             <div className="relative pb-8 text-2xl text-neutral-300 font-mono">
-              <Cursor activeLetterRef={opponentLetterRef} />
+              {/* Creator */}
+              <Cursor activeLetterRef={activeLetterRef} />
+
+              {/* Opponent */}
+              <Cursor activeLetterRef={opponentLetterRef} isOpponent={true} />
 
               <div className="whitespace-break-spaces leading-8 h-24 overflow-hidden">
                 {typingText}
