@@ -13,14 +13,15 @@ const Master = 180
 export const POST = async (request: Request) => {
   const body = await request.json()
   const { inputCode, userId } = body
+  const gameCode = inputCode as string
 
-  if (!inputCode || !userId) {
+  if (!gameCode || !userId) {
     return new NextResponse("Invalid User", { status: 401 })
   }
 
   const creatorOrj = await prisma.gamePlayer.findFirstOrThrow({
     where: {
-      gameCode: inputCode,
+      gameCode: gameCode,
     },
   })
 
@@ -32,14 +33,13 @@ export const POST = async (request: Request) => {
 
   await prisma.gamePlayer.create({
     data: {
-      gameCode: inputCode,
+      gameCode: gameCode,
       playerId: userId,
     },
   })
 
-  await pusherServer.trigger("game", "has-joined-game", {
-    // gameCode: `${JSON.stringify(inputCode)}\n\n`,
-    gameCode: inputCode,
+  await pusherServer.trigger(gameCode, "has-joined-game", {
+    gameCode: gameCode,
   })
 
   const creator: Player = {
@@ -56,7 +56,7 @@ export const POST = async (request: Request) => {
 
   //counter
   const startsAt = new Date().getTime() + CounterTime
-  await pusherServer.trigger("game", "game-starts-in", {
+  await pusherServer.trigger(gameCode, "game-starts-in", {
     startTime: startsAt,
     sentence: sentence.substring(0, Beginner),
     creator,

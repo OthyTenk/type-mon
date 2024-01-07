@@ -13,7 +13,6 @@ export const POST = async (request: Request) => {
   const game = await prisma.gamePlayer.findFirst({
     select: {
       gameCode: true,
-      id: true,
     },
     where: {
       playerId: userId,
@@ -21,17 +20,17 @@ export const POST = async (request: Request) => {
   })
 
   if (!game) {
-    return new NextResponse("Not found game", { status: 200 })
+    return new NextResponse("No Game found", { status: 200 })
   }
+  const { gameCode } = game
 
-  await pusherServer.trigger("game", "opponent-disconnected", {
-    // gameCode: `${JSON.stringify(inputCode)}\n\n`,
-    gameCode: game.gameCode,
+  await pusherServer.trigger(gameCode, "opponent-disconnected", {
+    gameCode: gameCode,
   })
 
   await prisma.gamePlayer.deleteMany({
     where: {
-      gameCode: game.gameCode,
+      gameCode: gameCode,
     },
   })
 

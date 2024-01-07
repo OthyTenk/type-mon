@@ -9,8 +9,13 @@ const CreateGame = () => {
   const [codeLoading, setCodeLoading] = useState(false)
   const [codeError, setCodeError] = useState(false)
   const [gameCode, setGameCode] = useState("")
-  const { currentUser, currentUserId, creatorCode, setGameCreatorCode } =
-    useGame()
+  const {
+    currentUser,
+    currentUserId,
+    creatorCode,
+    setGameCode: setGameCodeGlobal,
+    setGameCreatorCode,
+  } = useGame()
 
   const onCreateGame = async () => {
     setCodeLoading(true)
@@ -24,6 +29,7 @@ const CreateGame = () => {
       })
       .then((res) => {
         setGameCreatorCode(res.data.gameCode)
+        setGameCodeGlobal(res.data.gameCode)
       })
       .finally(() => {
         setCodeLoading(false)
@@ -32,6 +38,8 @@ const CreateGame = () => {
 
   const onJoinGame = async () => {
     setCodeLoading(true)
+
+    setGameCodeGlobal(gameCode)
 
     await axios
       .post("/api/game/join", {
@@ -43,6 +51,7 @@ const CreateGame = () => {
       })
       .catch((res) => {
         setCodeError(true)
+        setGameCodeGlobal("")
       })
       .finally(() => {
         setCodeLoading(false)

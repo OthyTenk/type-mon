@@ -2,11 +2,11 @@
 
 import { pusherClient } from "@/libs/pusher"
 import useGame from "@/store/useGame"
+import useGlobal from "@/store/useGlobal"
 import axios from "axios"
 import { FC, useEffect } from "react"
 import CreateGame from "./CreateGame"
 import GameBoard from "./GameBoard"
-import useGlobal from "@/store/useGlobal"
 
 interface GameModeProps {
   userName: string
@@ -21,8 +21,11 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
     code: gameCode,
     creatorCode,
     reset,
+    joinCode,
+    setJoinCode,
   } = useGame()
   const { stopType } = useGlobal()
+
   useEffect(() => {
     if (currentUser && currentUser?.length > 0 && currentUserId.length > 0)
       return
@@ -31,23 +34,22 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
   }, [userName, setUserInfo, currentUser, currentUserId])
 
   useEffect(() => {
-    const channel = pusherClient.subscribe("game")
+    if (!gameCode) return
+
+    const channel = pusherClient.subscribe(gameCode)
+
     channel.bind("has-joined-game", (data: { gameCode: string }) => {
       setGameCode(data.gameCode)
-      // const parsedMessage = JSON.parse(data);
-      // console.log(parsedMessage);
-      // setMessages((prev) => [...prev, parsedMessage]);
+      setJoinCode(data.gameCode)
     })
 
-    channel.bind("opponent-disconnected", (data: { gameCode: string }) => {
-      if (gameCode === data.gameCode) {
-        reset()
-        stopType()
+    return () => {
+      if (gameCode) {
+        pusherClient.unsubscribe(gameCode)
+        pusherClient.unbind("has-joined-game")
       }
-    })
-
-    return () => pusherClient.unsubscribe("game")
-  }, [gameCode, setGameCode, reset, stopType])
+    }
+  }, [gameCode, setGameCode, setJoinCode])
 
   const onLeaveGame = async () => {
     await axios
@@ -77,7 +79,7 @@ const GameMode: FC<GameModeProps> = ({ userName }) => {
           </button>
         )}
       </div>
-      {gameCode.length > 0 ? <GameBoard /> : <CreateGame />}
+      {joinCode.length > 0 ? <GameBoard /> : <CreateGame />}
     </div>
   )
 }
