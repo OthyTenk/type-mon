@@ -16,6 +16,8 @@ import TimeTick from "@/app/components/TimeTick"
 import { pusherClient } from "@/libs/pusher"
 import axios from "axios"
 import OpponentCursor from "./OpponentCursor"
+import useResultStatistic from "@/app/hooks/useResultStatistic"
+import useTypingResultModal from "@/app/hooks/useTypingResultModal"
 
 interface ITypingProps {
   currentText: string
@@ -29,6 +31,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const activeLetterRef = useRef<HTMLSpanElement>()
   const [position, setPosition] = useState(0)
   const [tickTime, setTickTime] = useState(0)
+  const stat = useResultStatistic()
+  const typingResultModal = useTypingResultModal()
 
   const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
 
@@ -94,7 +98,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
 
     setTypingText(content)
-  }, [inpFieldValue, currentText, position, stopType])
+  }, [inpFieldValue, currentText, position, stopType, typingResultModal])
 
   const setInputFocus = () => {
     return inputRef.current?.focus()
@@ -108,25 +112,31 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     return () => document.removeEventListener("keydown", setInputFocus)
   }, [loadParagraph])
 
-  // useEffect(() => {
-  //   let cpm = (charIndex - stat.mistakes) * (60 / (time - timeLeft))
-  //   cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
-  //   stat.CPM = Math.round(cpm)
+  useEffect(() => {
+    // let cpm = (charIndex - stat.mistakes) * (60 / (time - timeLeft))
+    let cpm = (charIndex - stat.mistakes) * (60 / tickTime)
+    cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
+    stat.CPM = Math.round(cpm)
 
-  //   let wpm = Math.round(
-  //     ((charIndex - stat.mistakes) / 5 / (time - timeLeft)) * 60
-  //   )
-  //   wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
-  //   stat.WPM = wpm
-  // }, [timeLeft, charIndex, stat, time])
+    // let wpm = Math.round(
+    //   ((charIndex - stat.mistakes) / 5 / (time - timeLeft)) * 60
+    // )
+    let wpm = Math.round(((charIndex - stat.mistakes) / 5 / tickTime) * 60)
+    wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
+    stat.WPM = wpm
+  }, [tickTime, charIndex, stat])
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
-    if (tickSecond() === 0) {
+    // if (tickSecond() === 0) {
+    //   return
+    // }
+    if (tickTime === 0) {
       return
     }
     setInpFieldValue(e.target.value)
 
     if (inpFieldValue.length > typingText.length) {
+      typingResultModal.onOpen()
       return
     }
 
@@ -172,7 +182,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
 
     if (isTyping) {
       interval = setInterval(() => {
-        setTickTime((priv) => priv + 1000)
+        // setTickTime((priv) => priv + 1000)
+        setTickTime((priv) => priv + 1)
       }, 1000)
     } else {
       clearInterval(interval)
@@ -181,9 +192,9 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     return () => clearInterval(interval)
   }, [isTyping])
 
-  const tickSecond = () => {
-    return Math.floor((tickTime / 1000) % 60)
-  }
+  // const tickSecond = () => {
+  //   return Math.floor((tickTime / 1000) % 60)
+  // }
 
   return (
     <>
@@ -194,7 +205,9 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           }  md:shadow-lg`}>
           <div className="flex flex-1 mt-28 md:mt-0" />
 
-          <TimeTick timeLeft={tickSecond()} />
+          {/* <TimeTick timeLeft={tickSecond()} />
+           */}
+          <TimeTick timeLeft={tickTime} />
           <div className="p-2">
             <input
               ref={inputRef}
