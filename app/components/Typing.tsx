@@ -186,7 +186,6 @@ const Typing: FC<ITypingProps> = ({
               className="md:-z-10 absolute caret-transparent opacity-10 outline-none text-transparent h-28 border-transparent bg-transparent"
               autoFocus
               value={inpFieldValue}
-              tabIndex={-1}
               onChange={onTyping}
             />
             <div className="relative pb-8 text-2xl text-neutral-300 font-mono">

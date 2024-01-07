@@ -10,7 +10,7 @@ import Typing from "./Typing"
 
 const GameBoard = () => {
   const { setGameCode, code: gameCode, currentUserId } = useGame()
-  const { startType, isTyping } = useGlobal()
+  const { startType } = useGlobal()
 
   const [startTime, setStartTime] = useState(0)
   const [showCounter, setShowCounter] = useState<number | undefined>(undefined)
