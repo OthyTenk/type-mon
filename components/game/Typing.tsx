@@ -12,6 +12,7 @@ import {
 
 import useGlobal from "@/store/useGlobal"
 
+import Cursor from "@/app/components/Cursor"
 import TimeTick from "@/app/components/TimeTick"
 import { IResultStatisticStore } from "@/app/hooks/useResultStatistic"
 import { countCorrectCharacters } from "@/app/utils"
@@ -20,8 +21,6 @@ import useGame from "@/store/useGame"
 import useGameResult from "@/store/useGameResult"
 import useGameResultModal from "@/store/useGameResultModal"
 import axios from "axios"
-import OpponentCursor from "./OpponentCursor"
-import Cursor from "@/app/components/Cursor"
 
 interface ITypingProps {
   currentText: string
@@ -35,7 +34,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const activeLetterRef = useRef<HTMLSpanElement>()
   const opponentLetterRef = useRef<HTMLSpanElement>()
 
-  const [position, setPosition] = useState(0)
+  // const [position, setPosition] = useState(0)
   const [tickTime, setTickTime] = useState(0)
   const [gameFinish, setGameFinish] = useState(false)
   const {
@@ -48,8 +47,6 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
   const gameResultModal = useGameResultModal()
   const { code: gameCode, reset } = useGame()
 
-  const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
-
   const [typingText, setTypingText] = useState<string | ReactElement[]>("")
   const [inpFieldValue, setInpFieldValue] = useState("")
   const [charIndex, setCharIndex] = useState(0)
@@ -59,13 +56,11 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
       <span
         key={index}
         ref={(element) => {
-          index === 0 && (activeLetterRef.current = element || undefined)
-          position === index &&
-            (opponentLetterRef.current = element || undefined)
-        }}
-        // className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}
-      >
-        {/* {position === index && <OpponentCursor />} */}
+          if (index === 0) {
+            activeLetterRef.current = element || undefined
+            opponentLetterRef.current = element || undefined
+          }
+        }}>
         {letter}
       </span>
     ))
@@ -73,7 +68,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     setTypingText(content)
     setInpFieldValue("")
     setCharIndex(0)
-  }, [currentText, position])
+  }, [currentText])
 
   useEffect(() => {
     if (!currentText || inpFieldValue.length > currentText.length) {
@@ -98,17 +93,8 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
           ref={(element) => {
             inpFieldValue.length === index &&
               (activeLetterRef.current = element || undefined)
-            position === index &&
-              (opponentLetterRef.current = element || undefined)
           }}
-          // className={`
-          //  ${inpFieldValue.length === index ? CurrentPositionStyle : ""}
-          // ${resultColor}`}
           className={`${resultColor}`}>
-          {/* {position === index && <OpponentCursor />}
-          {position >= currentText.length - 1 && position === index && (
-            <OpponentCursor />
-          )} */}
           {letter}
         </span>
       )
@@ -120,7 +106,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
 
     setTypingText(content)
-  }, [inpFieldValue, currentText, position, stopType])
+  }, [inpFieldValue, currentText, stopType])
 
   const setInputFocus = () => {
     return inputRef.current?.focus()
@@ -213,9 +199,22 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
 
     const opponentPosition = (data: { position: number; userId: string }) => {
-      if (!data || data.userId === currentUserId) return
+      if (!data || data.userId === currentUserId) {
+        return
+      }
 
-      setPosition(data.position)
+      // setPosition(data.position)
+      Array.from(currentText).map((letter, index) => {
+        return (
+          <span
+            key={index}
+            ref={(element) => {
+              data.position === index &&
+                (opponentLetterRef.current = element || undefined)
+            }}
+          />
+        )
+      })
     }
 
     const gameFinish = (data: IResultStatisticStore) => {
@@ -252,7 +251,6 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     }
   }, [
     setCreator,
-    setPosition,
     tickTime,
     currentUserId,
     gameCode,
@@ -264,6 +262,7 @@ const Typing: FC<ITypingProps> = ({ currentText, currentUserId }) => {
     setGuest,
     onFinishedGame,
     resetGameResult,
+    currentText,
   ])
 
   useEffect(() => {
