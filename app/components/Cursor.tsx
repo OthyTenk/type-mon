@@ -25,9 +25,10 @@ import { FC, MutableRefObject } from "react"
 
 interface CursorProps {
   activeLetterRef: MutableRefObject<HTMLSpanElement | undefined>
+  isOpponent?: boolean
 }
 
-const Cursor: FC<CursorProps> = ({ activeLetterRef }) => {
+const Cursor: FC<CursorProps> = ({ activeLetterRef, isOpponent = false }) => {
   if (!activeLetterRef || !activeLetterRef.current) return null
 
   const {
@@ -42,11 +43,15 @@ const Cursor: FC<CursorProps> = ({ activeLetterRef }) => {
   return (
     <div
       style={{ left: cursorLeft, top: cursorTop }}
-      className="absolute border-l-[2px] h-8 border-orange-500"
+      className={`absolute border-l-[2px] h-8 ${
+        !isOpponent ? "border-yellow-400" : "border-orange-500"
+      }`}
       //   style={{ transform: `translate(${cursorLeft}, ${cursorTop})` }}
       //   className="fixed w-[3px] transition h-8 bg-orange-500 text-white"
     >
-      <div className="w-[10px] h-[10px] bg-orange-500 -mt-[6px] -ml-[6px] rounded-full" />
+      {isOpponent && (
+        <div className="w-[10px] h-[10px] bg-orange-500 -mt-[6px] -ml-[6px] rounded-full" />
+      )}
     </div>
   )
 }
