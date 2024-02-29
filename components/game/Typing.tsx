@@ -12,11 +12,11 @@ import {
 
 import useGlobal from "@/store/useGlobal"
 
-import Cursor from "@/app/components/Cursor"
-import TimeTick from "@/app/components/TimeTick"
-import { IResultStatisticStore } from "@/app/hooks/useResultStatistic"
-import { countCorrectCharacters } from "@/app/utils"
+import Cursor from "@/components/Cursor"
+import TimeTick from "@/components/TimeTick"
+import { IResultStatisticStore } from "@/hooks/useResultStatistic"
 import { pusherClient } from "@/libs/pusher"
+import { countCorrectCharacters } from "@/libs/utils"
 import useGame from "@/store/useGame"
 import useGameResult from "@/store/useGameResult"
 import useGameResultModal from "@/store/useGameResultModal"

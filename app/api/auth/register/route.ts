@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 import { NextResponse } from "next/server"
 
-import prisma from "@/libs/prismadb"
+import prisma from "@/libs/db"
 
 const POST = async (request: Request) => {
   const body = await request.json()
@@ -17,7 +17,7 @@ const POST = async (request: Request) => {
   })
 
   if (isExists) {
-    return NextResponse.json({ message: "Already exists" }, { status: 409 })
+    return new NextResponse("Already exists", { status: 409 })
   }
 
   const isFirst = await prisma.user.findMany({
@@ -33,7 +33,7 @@ const POST = async (request: Request) => {
       email,
       name,
       hashedPassword,
-      isAdmin: isFirst?.length === 0,
+      isAdmin: isFirst === null,
     },
   })
 

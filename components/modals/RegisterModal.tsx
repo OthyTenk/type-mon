@@ -1,6 +1,6 @@
 "use client"
 
-import useRegisterModal from "@/app/hooks/useRegisterModal"
+import useRegisterModal from "@/hooks/useRegisterModal"
 import axios from "axios"
 import { signIn } from "next-auth/react"
 import { useCallback, useState } from "react"

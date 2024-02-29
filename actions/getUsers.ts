@@ -1,4 +1,6 @@
-import prisma from "@/libs/prismadb"
+"use server"
+
+import prisma from "@/libs/db"
 import { SafeUser } from "../types"
 
 const getUsers = async () => {
@@ -18,7 +20,8 @@ const getUsers = async () => {
     }))
 
     return safeUsers as SafeUser[]
-  } catch (error) {
+  } catch (error: unknown) {
+    console.log("[getUsers] :", error)
     throw new Error(error as string)
   }
 }

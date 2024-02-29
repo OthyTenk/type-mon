@@ -1,6 +1,8 @@
-import prisma from "../../libs/prismadb"
-import { DEFAULT_LANG } from "../site_settings"
-import { SafeTypingText } from "../types"
+"use server"
+
+import prisma from "@/libs/db"
+import { DEFAULT_LANG } from "@/site_settings"
+import { SafeTypingText } from "@/types"
 
 export interface ITypingTextByLangSlug {
   lang?: string
@@ -24,6 +26,7 @@ const getTypingTextByLang = async (
 
     return typingTexts
   } catch (error: unknown) {
+    console.error("[getTypingTextByLang] :", error)
     throw new Error(error as string)
   }
 }

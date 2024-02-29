@@ -1,6 +1,6 @@
 "use client"
 
-import { SafeUser } from "@/app/types"
+import { SafeUser } from "@/types"
 import { FC } from "react"
 import Container from "../Container"
 import Options from "../Options"

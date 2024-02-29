@@ -12,9 +12,10 @@ import {
 import { IoRefresh } from "react-icons/io5"
 
 import useGlobal from "@/store/useGlobal"
-import useResultStatistic from "../hooks/useResultStatistic"
-import useTypingResultModal from "../hooks/useTypingResultModal"
-import { countCorrectCharacters } from "../utils"
+
+import { countCorrectCharacters } from "@/libs/utils"
+import useResultStatistic from "@/hooks/useResultStatistic"
+import useTypingResultModal from "@/hooks/useTypingResultModal"
 import Cursor from "./Cursor"
 import TimeTick from "./TimeTick"
 

@@ -1,16 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { APP_NAME } from "../site_settings"
+import { APP_NAME } from "@/site_settings"
 import useGlobal from "@/store/useGlobal"
 
 const Footer = () => {
-  const year = new Date()
   const { isTyping } = useGlobal()
 
   if (isTyping) {
     return null
   }
+  const year = new Date()
 
   return (
     <div className="max-w-5xl md:mx-auto text-center md:px-5 mt-16 flex flex-col md:flex-row justify-center md:justify-between">

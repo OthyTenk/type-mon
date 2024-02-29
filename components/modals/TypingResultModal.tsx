@@ -1,7 +1,7 @@
 "use client"
 
-import useResultStatistic from "@/app/hooks/useResultStatistic"
-import useTypingResultModal from "@/app/hooks/useTypingResultModal"
+import useResultStatistic from "@/hooks/useResultStatistic"
+import useTypingResultModal from "@/hooks/useTypingResultModal"
 import useGlobal from "@/store/useGlobal"
 import axios from "axios"
 import { useRouter } from "next/navigation"

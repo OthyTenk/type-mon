@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { DEFAULT_LANG, DEFAULT_TIME } from "../app/site_settings"
+import { DEFAULT_LANG, DEFAULT_TIME } from "../site_settings"
 
 interface GlobalStore {
   language: string

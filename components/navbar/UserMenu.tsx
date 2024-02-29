@@ -1,6 +1,6 @@
 "use client"
 
-import { SafeUser } from "@/app/types"
+import { SafeUser } from "@/types"
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { FC, useCallback, useState } from "react"

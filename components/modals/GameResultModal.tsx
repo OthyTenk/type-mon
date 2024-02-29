@@ -1,6 +1,6 @@
 "use client"
 
-import Modal from "@/app/components/modals/Modal"
+import Modal from "@/components/modals/Modal"
 import useGame from "@/store/useGame"
 import useGameResult from "@/store/useGameResult"
 import useGameResultModal from "@/store/useGameResultModal"

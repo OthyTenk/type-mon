@@ -1,5 +1,4 @@
-import React from "react"
-import Client from "../../components/Client"
+import Client from "@/components/Client"
 import GameMode from "@/components/game/GameMode"
 
 const prefix = [

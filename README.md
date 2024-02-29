@@ -5,7 +5,7 @@
 ## Tech stack
 
 - Next.js (App router)
-- TainwindCSS
+- TailwindCSS
 - Typescript
 - Zustand
 - Prisma

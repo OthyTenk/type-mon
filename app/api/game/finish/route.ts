@@ -1,5 +1,5 @@
+import { pusherServer } from "@/libs/pusher"
 import { NextResponse } from "next/server"
-import { pusherServer } from "../../../../libs/pusher"
 
 export const POST = async (request: Request) => {
   const body = await request.json()

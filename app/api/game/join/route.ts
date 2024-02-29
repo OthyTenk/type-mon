@@ -1,7 +1,7 @@
+import prisma from "@/libs/db"
+import { pusherServer } from "@/libs/pusher"
 import { Player } from "@/types"
 import { NextResponse } from "next/server"
-import prisma from "../../../../libs/prismadb"
-import { pusherServer } from "../../../../libs/pusher"
 
 const CounterTime = 5000
 

@@ -1,5 +1,5 @@
-import getCurrentUser from "@/app/actions/getCurrentUser"
-import prisma from "@/libs/prismadb"
+import getCurrentUser from "@/actions/getCurrentUser"
+import prisma from "@/libs/db"
 import { NextResponse } from "next/server"
 
 interface IParams {
@@ -9,7 +9,7 @@ interface IParams {
 const POST = async (request: Request, { params }: { params: IParams }) => {
   const currentUser = await getCurrentUser()
   if (!currentUser) {
-    return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+    return new NextResponse("Unauthenticated", { status: 403 })
   }
 
   const { userEmail } = params
@@ -19,7 +19,7 @@ const POST = async (request: Request, { params }: { params: IParams }) => {
     typeof userEmail !== "string" ||
     userEmail !== currentUser.email
   ) {
-    return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+    return new NextResponse("Unauthenticated", { status: 403 })
   }
 
   const body = await request.json()
