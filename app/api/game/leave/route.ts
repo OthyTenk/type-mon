@@ -1,6 +1,6 @@
+import prisma from "@/libs/db"
+import { pusherServer } from "@/libs/pusher"
 import { NextResponse } from "next/server"
-import prisma from "../../../../libs/prismadb"
-import { pusherServer } from "../../../../libs/pusher"
 
 export const POST = async (request: Request) => {
   const body = await request.json()

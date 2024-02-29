@@ -12,10 +12,10 @@ import {
 import { IoRefresh } from "react-icons/io5"
 
 import useGlobal from "@/store/useGlobal"
-import useResultStatistic from "../hooks/useResultStatistic"
-import useTypingResultModal from "../hooks/useTypingResultModal"
-import { countCorrectCharacters } from "../utils"
-import Cursor from "./Cursor"
+
+import useResultStatistic from "@/hooks/useResultStatistic"
+import useTypingResultModal from "@/hooks/useTypingResultModal"
+import { countCorrectCharacters } from "@/libs/utils"
 import TimeTick from "./TimeTick"
 
 interface ITypingProps {
@@ -32,7 +32,6 @@ const Typing: FC<ITypingProps> = ({
   const { stopType, startType, time } = useGlobal()
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const activeLetterRef = useRef<HTMLSpanElement>()
 
   const typingResultModal = useTypingResultModal()
   const CurrentPositionStyle = "border-l-2 border-yellow-400 animate-pulse"
@@ -48,9 +47,6 @@ const Typing: FC<ITypingProps> = ({
     const content = Array.from(currentText).map((letter, index) => (
       <span
         key={index}
-        ref={(element) =>
-          index === 0 && (activeLetterRef.current = element || undefined)
-        }
         className={`leading-8 ${index === 0 ? CurrentPositionStyle : ""}`}>
         {letter}
       </span>
@@ -82,10 +78,6 @@ const Typing: FC<ITypingProps> = ({
       return (
         <span
           key={index}
-          ref={(element) =>
-            inpFieldValue.length === index &&
-            (activeLetterRef.current = element || undefined)
-          }
           className={`${
             inpFieldValue.length === index ? CurrentPositionStyle : ""
           } ${resultColor}`}>
@@ -138,11 +130,6 @@ const Typing: FC<ITypingProps> = ({
 
   const onTryAgain = () => {
     changeText()
-
-    setInterval(
-      () => activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" }),
-      500
-    )
   }
 
   const onTyping = (e: ChangeEvent<HTMLInputElement>) => {
@@ -162,7 +149,6 @@ const Typing: FC<ITypingProps> = ({
       startType()
     }
 
-    activeLetterRef?.current?.scrollIntoView({ behavior: "smooth" })
     setCharIndex(inpFieldValue.length)
     stat.mistakes = countCorrectCharacters(currentText, inpFieldValue)
     setInpFieldValue(e.target.value)
@@ -170,7 +156,7 @@ const Typing: FC<ITypingProps> = ({
 
   return (
     <>
-      <div className="p-0 my-10 min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
+      <section className="p-0 my-10 min-w-full flex flex-col justify-center items-center bg-[#1E1E1E]">
         <div
           className={`md:max-w-5xl p-5 md:p-7 w-[calc(100% - 10px)] md:rounded-3xl ${
             isTyping ? "bg-[#1E1E1E]" : "bg-neutral-800"
@@ -189,10 +175,6 @@ const Typing: FC<ITypingProps> = ({
               onChange={onTyping}
             />
             <div className="relative pb-8 text-2xl text-neutral-300 font-mono">
-              {activeLetterRef ? (
-                <Cursor activeLetterRef={activeLetterRef} />
-              ) : null}
-
               <div className="whitespace-break-spaces leading-8 h-24 overflow-hidden">
                 {typingText}
               </div>
@@ -209,7 +191,7 @@ const Typing: FC<ITypingProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </>
   )
 }

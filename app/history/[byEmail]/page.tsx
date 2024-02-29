@@ -1,10 +1,10 @@
+import getCurrentUser from "@/actions/getCurrentUser"
+import getMyHistories from "@/actions/getHistories"
+import History from "@/components/History"
 import { redirect } from "next/navigation"
-import getCurrentUser from "../../actions/getCurrentUser"
-import getMyHistories from "../../actions/getHistories"
-import History from "../../components/History"
 
-const HistoryPage = async () => {
-  let currentUser = await getCurrentUser()
+const HistoryDetailsPage = async () => {
+  const currentUser = await getCurrentUser()
 
   if (!currentUser) {
     redirect("/auth/login")
@@ -30,4 +30,4 @@ const HistoryPage = async () => {
   )
 }
 
-export default HistoryPage
+export default HistoryDetailsPage

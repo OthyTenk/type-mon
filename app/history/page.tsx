@@ -1,18 +1,10 @@
+import getCurrentUser from "@/actions/getCurrentUser"
+import getMyHistories from "@/actions/getHistories"
+import History from "@/components/History"
 import { redirect } from "next/navigation"
-import getCurrentUser from "../actions/getCurrentUser"
-import getMyHistories from "../actions/getHistories"
-import History from "../components/History"
-import { Metadata } from "next"
-
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    nocache: true,
-  },
-}
 
 const HistoryPage = async () => {
-  let currentUser = await getCurrentUser()
+  const currentUser = await getCurrentUser()
 
   if (!currentUser || !currentUser.isAdmin) {
     redirect("/auth/login")

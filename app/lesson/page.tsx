@@ -1,5 +1,4 @@
-import React from "react"
-import Demo from "../components/keyboard/Demo"
+import Demo from "@/components/keyboard/Demo"
 
 const page = () => {
   return (

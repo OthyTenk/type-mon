@@ -1,7 +1,7 @@
 import { randomInt } from "crypto"
 import { NextResponse } from "next/server"
 
-import prisma from "../../../../libs/prismadb"
+import prisma from "@/libs/db"
 
 export const POST = async (request: Request) => {
   const body = await request.json()

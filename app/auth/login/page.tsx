@@ -1,16 +1,8 @@
 import { redirect } from "next/navigation"
 
-import getCurrentUser from "@/app/actions/getCurrentUser"
-import Container from "@/app/components/Container"
-import LoginForm from "@/app/components/LoginForm"
-import { Metadata } from "next"
-
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    nocache: true,
-  },
-}
+import getCurrentUser from "@/actions/getCurrentUser"
+import Container from "@/components/Container"
+import LoginForm from "@/components/LoginForm"
 
 const LoginPage = async () => {
   const currentUser = await getCurrentUser()

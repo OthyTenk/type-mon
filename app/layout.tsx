@@ -2,18 +2,19 @@ import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import React from "react"
-import Footer from "./components/Footer"
-import RegisterModal from "./components/modals/RegisterModal"
-import TypingResultModal from "./components/modals/TypingResultModal"
-import "./globals.css"
-import ToasterProvider from "./providers/ToasterProvider"
+
+import Footer from "@/components/Footer"
+import GameResultModal from "@/components/modals/GameResultModal"
+import RegisterModal from "@/components/modals/RegisterModal"
+import TypingResultModal from "@/components/modals/TypingResultModal"
+import ToasterProvider from "@/providers/ToasterProvider"
 import {
   APP_NAME,
   SITE_DESCRIPTION,
   SITE_TITLE,
   SITE_URL,
-} from "./site_settings"
-import GameResultModal from "@/components/modal/GameResultModal"
+} from "@/site_settings"
+import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 

@@ -1,4 +1,6 @@
-import prisma from "@/libs/prismadb"
+"use server"
+
+import prisma from "@/libs/db"
 import { Prisma } from "@prisma/client"
 
 export interface IHistoryProps {
@@ -18,18 +20,23 @@ const getHistories = async (params: IHistoryProps) => {
     where.userEmail = byUserEmail
   }
 
-  const histories = await prisma.myHistory.findMany({
-    where,
-    take: 20,
-    orderBy: [
-      { wpm: "desc" },
-      {
-        createdAt: "desc",
-      },
-    ],
-  })
+  try {
+    const histories = await prisma.myHistory.findMany({
+      where,
+      take: 20,
+      orderBy: [
+        { wpm: "desc" },
+        {
+          createdAt: "desc",
+        },
+      ],
+    })
 
-  return histories
+    return histories
+  } catch (error: unknown) {
+    console.log("[getHistories] :", error)
+    throw new Error(error as string)
+  }
 }
 
 export default getHistories

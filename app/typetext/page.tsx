@@ -1,10 +1,10 @@
 "use client"
 
+import Button from "@/components/Button"
+import Input from "@/components/inputs/Input"
 import axios from "axios"
 import { FC, useState } from "react"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
-import Button from "../components/Button"
-import Input from "../components/inputs/Input"
 
 const TypeTextPage: FC = () => {
   const [isLoading, setIsLoading] = useState(false)

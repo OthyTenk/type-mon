@@ -1,11 +1,11 @@
 "use client"
 
 import { FC, useCallback, useEffect, useState } from "react"
-import { SafeTypingText, SafeUser } from "../types"
+
+import { SafeTypingText, SafeUser } from "@/types"
 import AppTitle from "./AppTitle"
 import Typing from "./Typing"
 import Navbar from "./navbar/Navbar"
-import useGlobal from "@/store/useGlobal"
 
 interface IHomeSectionProps {
   texts: SafeTypingText[]
@@ -13,7 +13,6 @@ interface IHomeSectionProps {
 }
 
 const HomeSection: FC<IHomeSectionProps> = ({ texts, currentUser = null }) => {
-  const { language } = useGlobal()
   const [currentText, setCurrentText] = useState("")
 
   const getRandomIndex = useCallback(() => {

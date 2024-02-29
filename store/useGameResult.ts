@@ -1,7 +1,7 @@
 import {
   INITIAL_STATE,
   IResultStatisticStore,
-} from "@/app/hooks/useResultStatistic"
+} from "@/hooks/useResultStatistic"
 import { create } from "zustand"
 
 interface GameResultStore {
