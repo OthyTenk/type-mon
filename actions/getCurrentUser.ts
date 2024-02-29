@@ -32,7 +32,6 @@ const getCurrentUser = async () => {
       emailVerified: currentUser.emailVerified?.toISOString() || null,
     }
   } catch (error) {
-    console.error("[getCurrentUser] :", error)
     return null
   }
 }
